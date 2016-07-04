@@ -1,0 +1,13 @@
+---
+loglevel: disabled
+bootstrapVersion: 3
+styleLoaders:
+  - style
+  - css
+  - sass
+styles: true
+scripts: true
+extractStyles: true
+preBootstrapCustomizations: ./style/bootstrap/pre-customizations.scss
+bootstrapCustomizations: ./style/bootstrap/customizations.scss
+appStyles: ./style/style.scss
