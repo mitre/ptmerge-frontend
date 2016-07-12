@@ -1,6 +1,8 @@
 # React Starter
 
-Modified from [ReduxSimpleStarter](https://github.com/StephenGrider/ReduxSimpleStarter) by [Noranda Brown](https://github.com/noranda).
+A starter repo for React apps using Webkit with support for Redux, Bootstrap 3, FontAwesome, and SASS.
+
+Modified from [ReduxSimpleStarter](https://github.com/StephenGrider/ReduxSimpleStarter).
 
 ### Getting Started
 
@@ -15,7 +17,7 @@ Modified from [ReduxSimpleStarter](https://github.com/StephenGrider/ReduxSimpleS
 
 Includes support for:
 
-* Bootstrap 3 (css only)
+* Bootstrap 3 (CSS only)
 * FontAwesome
 * SASS
 
@@ -25,4 +27,4 @@ Includes support for:
 npm run build
 ```
 
-Files will be put into the `dist` folder
+Files will be put into the `dist` folder.
