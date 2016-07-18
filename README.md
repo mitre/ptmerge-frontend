@@ -1,6 +1,6 @@
 # React Starter
 
-A starter repo for React apps using Webkit with support for Redux, Bootstrap 3, FontAwesome, and SASS.
+A starter repo for React apps using Webpack with support for Redux, Bootstrap 3, FontAwesome, and SASS.
 
 Modified from [ReduxSimpleStarter](https://github.com/StephenGrider/ReduxSimpleStarter).
 
