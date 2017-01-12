@@ -1,0 +1,70 @@
+@import "../elements/variables";
+
+.merge {
+  .merge-tool {
+    .merge-tool-header {
+      .merge-tool-header-titles {
+        margin-bottom: 5px;
+        text-align: center;
+        color: $white;
+        font-size: 1.2em;
+        font-weight: 300;
+        letter-spacing: 1px;
+      }
+
+      .merge-tool-header-selectors {
+        margin: 0;
+
+        .merge-tool-header-selector {
+          display: block;
+          width: 300px;
+          background-color: $white;
+          padding: 10px 10px 0 10px;
+
+          &.source {
+
+          }
+
+          &.target {
+
+          }
+
+          .merge-tool-header-selector-icon {
+            position: relative;
+
+            .fa {
+              position: relative;
+              z-index: 1;
+              padding: 0 10px;
+              font-size: 1.3em;
+              text-align: center;
+            }
+
+            .icon-line {
+              display: block;
+              position: absolute;
+              margin-left: 15px;
+              width: 3px;
+              height: 75%;
+              top: 25%;
+              background-color: $lighter-gray;
+            }
+          }
+
+          .source-name {
+            padding-bottom: 10px;
+          }
+        }
+
+      }
+    }
+
+    .merge-tool-body {
+
+    }
+
+    .merge-tool-footer {
+
+    }
+  }
+}
