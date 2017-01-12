@@ -1,21 +1,15 @@
 import React, { Component, PropTypes } from 'react';
-import { syncHistoryWithStore } from 'react-router-redux';
-import { browserHistory } from 'react-router';
 import { Provider } from 'react-redux';
 import routes from '../routes';
-import { Router } from 'react-router';
+import { Router, hashHistory } from 'react-router';
 
 export default class Root extends Component {
   render() {
-    let { store } = this.props;
-
-    // Create an enhanced history that syncs navigation events with the store
-    let history = syncHistoryWithStore(browserHistory, store);
-
+    const { store } = this.props;
     return (
       <Provider store={store}>
         <div>
-          <Router history={history} routes={routes} />
+          <Router history={hashHistory} routes={routes} />
         </div>
       </Provider>
     );

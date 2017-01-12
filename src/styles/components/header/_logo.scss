@@ -1,0 +1,13 @@
+@import "../../elements/variables";
+
+.logo {
+  font-size: 1.5em;
+  letter-spacing: 2px;
+  color: $white;
+  font-weight: 300;
+
+  .header-logo {
+    margin: 0 10px 5px 20px;
+    width: 2em;
+  }
+}

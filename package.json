@@ -28,7 +28,7 @@
     "babel-preset-react": "^6.11.1",
     "babel-preset-stage-1": "^6.5.0",
     "bootstrap-loader": "^1.0.10",
-    "bootstrap-sass": "^3.3.6",
+    "bootstrap-sass": "^3.3.7",
     "chai": "^3.5.0",
     "chai-jquery": "^2.0.0",
     "chart.js": "^2.1.6",

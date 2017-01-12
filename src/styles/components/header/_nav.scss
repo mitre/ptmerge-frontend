@@ -1,0 +1,39 @@
+@import "../../elements/variables";
+
+.navbar {
+  border: 0;
+  background-color: $brand-secondary;
+
+  .navbar-brand {
+    color: $white;
+  }
+
+  .navbar-nav {
+    margin-top: 2px;
+
+    li a {
+      padding: 15px 35px;
+      color: $white;
+      font-weight: 300;
+      letter-spacing: 1px;
+
+      &.active {
+        border-bottom: 3px solid $red;
+      }
+    }
+
+    .open a.dropdown-toggle {
+      background-color: $brand-secondary;
+    }
+
+    .dropdown-menu {
+      margin-top: 2px;
+      border-radius: 0;
+      box-shadow: none;
+
+      a {
+        color: $brand-secondary;
+      }
+    }
+  }
+}
