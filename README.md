@@ -5,7 +5,7 @@ and [Redux](http://redux.js.org/) based front end for the services provided by
 the [Patient Merging Test Harness](https://github.com/mitre/ptmerge).
 
 ## License
-Copyright 2016 The MITRE Corporation
+Copyright 2016 The MITRE Corporation, PRS#16-3601
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
