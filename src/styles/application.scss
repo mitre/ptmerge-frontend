@@ -3,6 +3,9 @@
 @import "~bootstrap/scss/mixins";
 
 // application imports
+@import "elements/animation";
+@import "elements/forms";
+@import "elements/panels";
 @import "elements/variables";
 @import "components/header/logo";
 @import "components/header/nav";
@@ -11,12 +14,18 @@
 @import "vendors/font-awesome";
 
 // DOM styles
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
 body {
   background-color: $brand-primary;
   color: $text-color;
   font-family: $font-family-sans-serif;
   font-size: $font-size-base;
-  // padding-top: 70px;
   overflow-x: hidden;
 }
 

@@ -1,8 +1,12 @@
 @import "../elements/variables";
 
 .merge {
+  margin: 0;
+  
   .merge-tool {
     .merge-tool-header {
+      margin-bottom: -3px;
+      
       .merge-tool-header-titles {
         margin-bottom: 5px;
         text-align: center;
@@ -17,20 +21,21 @@
 
         .merge-tool-header-selector {
           display: block;
-          width: 300px;
+          width: 400px;
           background-color: $white;
-          padding: 10px 10px 0 10px;
+          padding: 5px 10px 0 10px;
 
           &.source {
-
+            margin: 3px;
           }
 
           &.target {
-
+            border: 3px solid $brand-secondary;
           }
 
           .merge-tool-header-selector-icon {
             position: relative;
+            padding-top: 5px;
 
             .fa {
               position: relative;
@@ -43,7 +48,7 @@
             .icon-line {
               display: block;
               position: absolute;
-              margin-left: 15px;
+              margin-left: 16px;
               width: 3px;
               height: 75%;
               top: 25%;
@@ -60,7 +65,36 @@
     }
 
     .merge-tool-body {
-
+      background-color: $white;
+      
+      .line {
+        display: block;
+        position: absolute;
+        margin-left: 16px;
+        width: 3px;
+        height: 100%;
+        top: 0;
+        background-color: #EBEBEB;
+      }
+      
+      .source,
+      .target {
+        position: relative;
+        background-color: $white;
+        width: 400px;
+      }
+      
+      .target {
+        border: 3px solid $brand-secondary;
+        margin: -5px 0 -3px 0;
+      }
+      
+      .merge-row {
+        .key {
+          text-align: right;
+          font-weight: bold;
+        }
+      }
     }
 
     .merge-tool-footer {
