@@ -201,10 +201,33 @@ export class Merge extends Component {
 
           <div className="merge-tool-body">
             {this.renderedPatientData()}
-          </div>
-
-          <div className="merge-tool-footer">
-
+            
+            <div className="merge-tool-footer">
+              <div className="d-flex justify-content-around">
+                <div className="source source1">
+                  <div className="line"></div>
+                  <div className="record-end"></div>
+                </div>
+                
+                <div className="target">
+                  <div className="line"></div>
+                  <div className="conflict-count">
+                    <FontAwesome name="exclamation-circle" />
+                    0 conflicts to accept
+                  </div>
+                  
+                  <div className="action-buttons">
+                    <button type="button" className="btn btn-secondary">Cancel</button>
+                    <button type="button" className="btn btn-primary">Create Target Record</button>
+                  </div>
+                </div>
+                
+                <div className="source source2">
+                  <div className="line"></div>
+                  <div className="record-end"></div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
