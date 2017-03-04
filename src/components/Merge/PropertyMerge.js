@@ -28,7 +28,8 @@ export default class PropertyMerge extends Component {
         key={key}
         categoryName={key}
         categoryValue={this.state.patientData[key]}
-        transformName={true} />
+        transformName={true}
+        patientType={this.props.patientType} />
     );
   }
   
@@ -49,8 +50,6 @@ PropertyMerge.propTypes = {
   category: PropTypes.shape({
     id: PropTypes.string.isRequired
   }).isRequired,
-  source1Patient: PropTypes.object,
-  source2Patient: PropTypes.object,
-  targetPatient: PropTypes.object,
-  patient: PropTypes.string
+  patient: PropTypes.string,
+  patientType: PropTypes.string
 };

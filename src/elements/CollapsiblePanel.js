@@ -36,14 +36,15 @@ export default class CollapsiblePanel extends Component {
 
   render() {
     let chevronClassNames = classNames('collapsible-chevron', 'pull-right', 'fa', 'fa-chevron-down', 'rotate',
-                                       { left: this.state.chevronToggle});
+                                       { left: this.state.chevronToggle });
     let panelClassNames = classNames('panel', 'collapsible-panel',
                                      { 'is-nested': this.props.isNested },
                                      { 'has-nested': this.props.hasNested });
+    let panelHeadingClassName = classNames('panel-heading', { 'has-nested': this.props.hasNested });
 
     return (
       <div className={panelClassNames}>
-        <div className="panel-heading">
+        <div className={panelHeadingClassName}>
           <a onClick={ ()=> this.setState({ open: !this.state.open, chevronToggle: !this.state.chevronToggle })}>
             <span className="panel-title">{this.panelIcon()} {`${this.props.panelTitle}`} {this.panelCount()}</span>
             <i className={chevronClassNames}></i>

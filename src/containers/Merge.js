@@ -117,11 +117,28 @@ export class Merge extends Component {
     }
   }
   
-  // renders categories with patient data for selected source and target patients
-  renderedPatientData() {
+  allPatientsSelected() {
     if (this.props.source1PatientData == null ||
         this.props.source2PatientData == null ||
         this.state.targetPatientData == null) {
+      return false;
+    }
+    
+    return true;
+  }
+  
+  allSourcesSelected() {
+    if (this.props.source1PatientData == null ||
+        this.props.source2PatientData == null ) {
+      return false;
+    }
+    
+    return true;
+  }
+  
+  // renders categories with patient data for selected source and target patients
+  renderedPatientData() {
+    if (!this.allPatientsSelected()) {
       return; // only renders when all 3 patients have been selected
     }
     
@@ -132,6 +149,64 @@ export class Merge extends Component {
         source1Patient={this.props.source1PatientData}
         source2Patient={this.props.source2PatientData}
         targetPatient={this.state.targetPatientData} />
+    );
+  }
+  
+  renderedTarget() {
+    if (!this.allSourcesSelected()) {
+      return (
+        <button className="btn btn-secondary merge-button d-flex">
+          Merge
+        </button>
+      );
+    }
+    
+    return (
+      <div className="merge-tool-header-selector target d-flex">
+        <div className="merge-tool-header-selector-icon target">
+          <FontAwesome name="user" />
+          <span className="icon-line"></span>
+        </div>
+
+        Target Name
+      </div>
+    );
+  }
+  
+  renderedFooter() {
+    if (!this.allPatientsSelected()) { return; }
+    
+    return (
+      <div className="merge-tool-footer">
+        <div className="d-flex justify-content-around">
+          <div className="source source1">
+            <div className="line"></div>
+            <div className="record-end"></div>
+          </div>
+          
+          <div className="merge-tool-placeholder"></div>
+          
+          <div className="target">
+            <div className="line"></div>
+            <div className="conflict-count">
+              <FontAwesome name="exclamation-circle" />
+              0 conflicts to accept
+            </div>
+            
+            <div className="action-buttons">
+              <button type="button" className="btn btn-secondary">Cancel</button>
+              <button type="button" className="btn btn-primary">Create Target Record</button>
+            </div>
+          </div>
+          
+          <div className="merge-tool-placeholder"></div>
+          
+          <div className="source source2">
+            <div className="line"></div>
+            <div className="record-end"></div>
+          </div>
+        </div>
+      </div>
     );
   }
 
@@ -158,7 +233,7 @@ export class Merge extends Component {
             </div>
 
             <div className="merge-tool-header-selectors d-flex justify-content-around">
-              <div className="merge-tool-header-selector source d-flex">
+              <div className="merge-tool-header-selector source source1 d-flex">
                 <div className="merge-tool-header-selector-icon source-1">
                   <FontAwesome name="user" />
                   <span className="icon-line"></span>
@@ -170,21 +245,14 @@ export class Merge extends Component {
                   onChange={this.select2Handler('source1Patient')}
                   placeholder="Select a source" />
               </div>
-
-              <div className="merge-tool-header-selector target d-flex">
-                <div className="merge-tool-header-selector-icon target">
-                  <FontAwesome name="user" />
-                  <span className="icon-line"></span>
-                </div>
-
-                <Select
-                  options={targetPatientList.map((patient) => { return { value: patient.id, label: patient.name }; })}
-                  value={this.state.targetPatient == null ? null : this.state.targetPatient.id}
-                  onChange={this.select2TargetPatientHandler.bind(this)}
-                  placeholder="Select a target" />
-              </div>
-
-              <div className="merge-tool-header-selector source d-flex">
+              
+              <div className="merge-tool-placeholder"></div>
+              
+              {this.renderedTarget()}
+              
+              <div className="merge-tool-placeholder"></div>
+              
+              <div className="merge-tool-header-selector source source2 d-flex">
                 <div className="merge-tool-header-selector-icon source-2">
                   <FontAwesome name="user" />
                   <span className="icon-line"></span>
@@ -201,34 +269,9 @@ export class Merge extends Component {
 
           <div className="merge-tool-body">
             {this.renderedPatientData()}
-            
-            <div className="merge-tool-footer">
-              <div className="d-flex justify-content-around">
-                <div className="source source1">
-                  <div className="line"></div>
-                  <div className="record-end"></div>
-                </div>
-                
-                <div className="target">
-                  <div className="line"></div>
-                  <div className="conflict-count">
-                    <FontAwesome name="exclamation-circle" />
-                    0 conflicts to accept
-                  </div>
-                  
-                  <div className="action-buttons">
-                    <button type="button" className="btn btn-secondary">Cancel</button>
-                    <button type="button" className="btn btn-primary">Create Target Record</button>
-                  </div>
-                </div>
-                
-                <div className="source source2">
-                  <div className="line"></div>
-                  <div className="record-end"></div>
-                </div>
-              </div>
-            </div>
           </div>
+          
+          {this.renderedFooter()}
         </div>
       </div>
     );

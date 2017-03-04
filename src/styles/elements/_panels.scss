@@ -11,6 +11,11 @@
       padding-left: 10px;
       background-color: lighten($brand-secondary, 10%);
     }
+    
+    .source {
+      &.source1 { margin-left: 20px !important; }
+      &.source2 { margin-right: 10px !important; }
+    }
   }
   
   &.has-nested {
@@ -26,7 +31,10 @@
     height: 48px;
     line-height: 2em;
     padding: 0;
-    margin: 0 0 2px 0;
+    
+    &.has-nested {
+      margin-bottom: 0;
+    }
 
     .panel-title {
       font-size: 18px;

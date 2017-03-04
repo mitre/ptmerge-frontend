@@ -55,8 +55,13 @@ export const mergeCategories = [
       {
         "id": "demographics.maritalStatus",
         "name": "Marital Status",
-        "klass": null
+        "klass": SimpleMerge
       },
+      {
+        "id": "demographics.phone",
+        "name": "Phone",
+        "klass": SimpleMerge
+      },      
       {
         "id": "demographics.placeOfBirth",
         "name": "Place of Birth",

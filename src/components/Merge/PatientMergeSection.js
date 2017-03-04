@@ -9,19 +9,23 @@ export default class PatientMergeSection extends Component {
   getContent(Klass) {
     return (
       <div className="d-flex justify-content-around">
-        <div className="source">
+        <div className="source source1">
           <div className="line"></div>
-          { Klass == null ? null : <Klass {...this.props} patient="source1Patient" /> }
+          { Klass == null ? null : <Klass {...this.props} patient="source1Patient" patientType="source1"/> }
         </div>
+        
+        <div className="merge-tool-placeholder"></div>
         
         <div className="target">
           <div className="line"></div>
-          { Klass == null ? null : <Klass {...this.props} patient="targetPatient" /> }
+          { Klass == null ? null : <Klass {...this.props} patient="targetPatient" patientType="target"/> }
         </div>
         
-        <div className="source">
+        <div className="merge-tool-placeholder"></div>
+        
+        <div className="source source2">
           <div className="line"></div>
-          { Klass == null ? null : <Klass {...this.props} patient="source2Patient" /> }
+          { Klass == null ? null : <Klass {...this.props} patient="source2Patient" patientType="source2"/> }
         </div>
       </div>
     );

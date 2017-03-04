@@ -4,6 +4,19 @@
   margin: 0;
   
   .merge-tool {
+    .merge-tool-placeholder {
+      width: 50px;
+    }
+    
+    .merge-tool-header,
+    .merge-tool-body,
+    .merge-tool-footer {
+      .source {
+        &.source1 { margin-left: 25px; }
+        &.source2 { margin-right: 25px; }
+      }
+    }
+    
     .merge-tool-header {
       margin-bottom: -3px;
       
@@ -18,15 +31,22 @@
 
       .merge-tool-header-selectors {
         margin: 0;
+        
+        .merge-button {
+          background-color: $brand-secondary;
+          color: $white;
+          border: none;
+          width: 20%;
+        }
 
         .merge-tool-header-selector {
           display: block;
           width: 400px;
           background-color: $white;
           padding: 5px 10px 0 10px;
-
+          
           &.source {
-            margin: 3px;
+            margin-bottom: 3px;
           }
 
           &.target {
@@ -63,7 +83,8 @@
       }
     }
 
-    .merge-tool-body {
+    .merge-tool-body,
+    .merge-tool-footer {
       background-color: $white;
       
       .line {
@@ -81,29 +102,31 @@
         position: relative;
         background-color: $white;
         width: 400px;
-        margin-bottom: 40px;
+        padding-bottom: 1px;
       }
-      
-      .source {
-        height: 30px;
-        
-        &.source1 { margin-left: 1px; }
-        &.source2 { margin-right: 1px; }
-      }
-      
-      
       
       .target {
         border-left: 3px solid $brand-secondary;
         border-right: 3px solid $brand-secondary;
-        border-bottom: 3px solid $brand-secondary;
-        margin: -5px 0 40px 0;
       }
       
       .merge-row {
         .key {
           text-align: right;
           font-weight: bold;
+        }
+        
+        .arrow {
+          position: absolute;
+          color: $light-gray;
+          
+          &.arrow-source1 {
+            right: -25px;
+          }
+          
+          &.arrow-source2 {
+            left: -20px;
+          }
         }
       }
     }
@@ -112,6 +135,22 @@
       background-color: #F5F5F5;
       margin: 0;
       padding: 0;
+      
+      .line {
+        height: 50%;
+      }
+      
+      .source {
+        height: 40px;
+        
+        // &.source1 { margin-left: 2px }
+        // &.source2 { margin-right: 2px }
+      }
+      
+      .target {
+        margin-bottom: 40px;
+        border-bottom: 3px solid $brand-secondary;
+      }
       
       .conflict-count {
         margin: 10px 40px 10px 10px;

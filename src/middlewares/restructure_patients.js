@@ -65,11 +65,12 @@ function restructurePatient(patientData) {
         healthInsurance: null,
         humanName: {
           prefix: null,
-          familyName: patient.name[0].family[0],
+          familyName: patient.name[0].family,
           givenName: patient.name[0].given[0],
           suffix: null
         },
-        maritalStatus: null,
+        maritalStatus: patient.maritalStatus.coding[0].display,
+        phone: patient.telecom[0].value,
         placeOfBirth: null,
         socialSecurityNumber: null
       },
@@ -88,7 +89,7 @@ function restructurePatientList(patients) {
   return patients.map(({ resource }) => {
     return {
       id: resource.id,
-      name: `${resource.name[0].family[0]}, ${resource.name[0].given[0]}`
+      name: `${resource.name[0].family}, ${resource.name[0].given[0]}`
     };
   });
 }

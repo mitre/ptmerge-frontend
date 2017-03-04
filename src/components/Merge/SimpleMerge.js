@@ -29,7 +29,8 @@ export default class SimpleMerge extends Component {
       <MergeRow
         categoryName={this.state.categoryName}
         categoryValue={this.state.patientData}
-        transformName={true} />
+        transformName={true}
+        patientType={this.props.patientType} />
     );
   }
 }
@@ -40,8 +41,6 @@ SimpleMerge.propTypes = {
   category: PropTypes.shape({
     id: PropTypes.string.isRequired
   }).isRequired,
-  source1Patient: PropTypes.object,
-  source2Patient: PropTypes.object,
-  targetPatient: PropTypes.object,
-  patient: PropTypes.string
+  patient: PropTypes.string,
+  patientType: PropTypes.string
 };
