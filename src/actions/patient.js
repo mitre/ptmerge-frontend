@@ -6,7 +6,7 @@ import {
 } from './types';
 
 export function fetchPatient(id, position) {
-  let PATIENT_URL = `${FHIR_SERVER}/Patient/${id}/$everything`
+  let PATIENT_URL = `${FHIR_SERVER}/Patient/${id}/$everything`;
 
   return {
     type: FETCH_PATIENT,

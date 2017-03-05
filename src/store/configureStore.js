@@ -5,12 +5,14 @@ import rootReducer from '../reducers';
 import promiseMiddleware from 'redux-promise-middleware';
 
 import restructurePatientsMiddleware from '../middlewares/restructure_patients';
+import restructureMergeMiddleware from '../middlewares/restructure_merge';
 
 export default function configureStore(initialState) {
   let middleware = applyMiddleware(
     promiseMiddleware(),
     createLogger(),
-    restructurePatientsMiddleware
+    restructurePatientsMiddleware,
+    restructureMergeMiddleware
   );
 
   return createStore(

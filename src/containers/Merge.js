@@ -6,23 +6,61 @@ import FontAwesome from 'react-fontawesome';
 import Select from 'react-select';
 
 import { fetchPatient, fetchPatientList } from '../actions/patient';
+import { mergePatients } from '../actions/merge';
 
 import PageHeader from '../components/Header/PageHeader';
-import PatientMergeSection from '../components/Merge/PatientMergeSection';
+import ArrayMerge from '../components/Merge/ArrayMerge';
 
-import mergeCategories from '../utils/merge_categories';
+import PatientMerger from '../models/patient_merger';
 
 export class Merge extends Component {
+  static conditionMergeKeys = Object.freeze({
+    'Condition': 'code.coding.[0].display',
+    'Code': 'code.coding.[0].code',
+    'System': 'code.coding.[0].system',
+    'Onset Date': 'onsetDateTime',
+    'Updated': 'meta.lastUpdated'
+  });
+
+  static encounterMergeKeys = Object.freeze({
+    'Encounter': 'type.[0].coding.[0].display',
+    'Code': 'type.[0].coding.[0].code',
+    'System': 'type.[0].coding.[0].system',
+    'Class': 'class.code',
+    'Status': 'status',
+    'Start Date': 'period.start',
+    'End Date': 'period.end',
+    'Updated': 'meta.lastUpdated'
+  });
+
+  static medicationMergeKeys = Object.freeze({
+    'Medication': 'medicationCodeableConcept.coding.[0].display',
+    'Code': 'medicationCodeableConcept.coding.[0].code',
+    'System': 'medicationCodeableConcept.coding.[0].system',
+    'Status': 'status',
+    'Start Date': 'effectivePeriod.start',
+    'End Date': 'effectivePeriod.end',
+    'Updated': 'meta.lastUpdated'
+  });
+
+  static procedureMergeKeys = Object.freeze({
+    'Procedure': 'code.coding.[0].display',
+    'Code': 'code.coding.[0].code',
+    'System': 'code.coding.[0].system',
+    'Status': 'status',
+    'Performed Date': 'performedDateTime',
+    'Updated': 'meta.lastUpdated'
+  });
+
   constructor(props) {
     super(props);
 
     this.state = {
       source1Patient: null,
       source2Patient: null,
-      targetPatient: null,
-      targetPatientData: null,
       sourcePatientList: [],
-      setTargetPatientOnNewProps: false
+      mergeInProgress: false,
+      loading: false
     };
   }
 
@@ -32,79 +70,36 @@ export class Merge extends Component {
 
   componentWillReceiveProps(nextProps) {
     // when patient list changes, updates list -- used in select2 component
-    let newState = {};
     if (this.props.patientList !== nextProps.patientList) {
-      newState.sourcePatientList = nextProps.patientList.map(({ id, name }) => {
-        return { value: id, label: name };
+      this.setState({
+        sourcePatientList: nextProps.patientList.map(({ id, name }) => {
+          return { value: id, label: name };
+        })
+      });
+    } else if (this.props.patientMerger !== nextProps.patientMerger) {
+      this.setState({
+        mergeInProgress: nextProps.patientMerger != null,
+        loading: false
       });
     }
-    
-    // when source data properties change, sets target patient data to selected source patient data
-    if (this.state.setTargetPatientOnNewProps && this.state.targetPatient) {
-      if (nextProps.source1PatientData && nextProps.source1PatientData.id === this.state.targetPatient.id) {
-        newState.targetPatientData = nextProps.source1PatientData;
-        newState.setTargetPatientOnNewProps = false;
-      } else if (nextProps.source2PatientData && nextProps.source2PatientData.id === this.state.targetPatient.id) {
-        newState.targetPatientData = nextProps.source2PatientData;
-        newState.setTargetPatientOnNewProps = false;
-      }
-    }
-    
-    this.setState(newState);
   }
 
   // handles selection of source patient, field = source1Patient or source2Patient
   select2Handler(field) {
     // returns a function which fetches the patient and sets the state for the given field
     return (selectedOption) => {
-      let patientId = null;
-      let patient = null;
-
       if (selectedOption) {
-        patientId = selectedOption.value;
-        patient = this.props.patientList.find((patient) => patient.id === patientId);
-        
-        this.props.fetchPatient(patient.id, field);
+        let patient = this.props.patientList.find((patient) => patient.id === selectedOption.value);
+        this.setState({
+          [field]: patient
+        });
       }
-
-      this.setState({
-        [field]: patient
-      });
     };
   }
-  
-  // handles selection of target patient
-  select2TargetPatientHandler(selectedOption) {
-    if (selectedOption) {
-      let targetPatientId = selectedOption.value;
-      let targetPatient = this.props.patientList.find((patient) => patient.id === targetPatientId);
-      let targetPatientData = null;
-      let setTargetPatientOnNewProps = false; // handles cases when ajax call for source patient hasn't finished yet
-      
-      // sets target to source1 patient when selected
-      if (this.props.source1PatientData && this.props.source1PatientData.id === targetPatientId) {
-        targetPatientData = this.props.source1PatientData;
-      // sets target to source2 patient when selected
-      } else if (this.props.source2PatientData && this.props.source2PatientData.id === targetPatientId) {
-        targetPatientData = this.props.source2PatientData;
-      // target was selected before ajax call for source patient was completed
-      } else {
-        setTargetPatientOnNewProps = true;
-      }
-      
-      this.setState({
-        targetPatient,
-        targetPatientData,
-        setTargetPatientOnNewProps
-      });
-    } else {
-      // when target patient is cleared
-      this.setState({
-        targetPatient: null,
-        targetPatientData: null,
-        setTargetPatientOnNewProps: false
-      });
-    }
+
+  beginMerge() {
+    this.setState({ loading: true });
+    this.props.mergePatients(this.state.source1Patient.id, this.state.source2Patient.id);
   }
 
   // excludes selected source patient from other source patient list -- prevents selecting the
@@ -116,51 +111,35 @@ export class Merge extends Component {
       return this.state.sourcePatientList.filter((patient) => patient.value !== excludedPatient.id);
     }
   }
-  
-  allPatientsSelected() {
-    if (this.props.source1PatientData == null ||
-        this.props.source2PatientData == null ||
-        this.state.targetPatientData == null) {
-      return false;
-    }
-    
-    return true;
-  }
-  
+
   allSourcesSelected() {
-    if (this.props.source1PatientData == null ||
-        this.props.source2PatientData == null ) {
-      return false;
-    }
-    
-    return true;
+    return this.state.source1Patient != null && this.state.source2Patient != null;
   }
-  
+
   // renders categories with patient data for selected source and target patients
   renderedPatientData() {
-    if (!this.allPatientsSelected()) {
-      return; // only renders when all 3 patients have been selected
+    if (!this.state.mergeInProgress) {
+      // only renders when merge is in progress
+      return;
     }
-    
-    return mergeCategories.map((category) =>
-      <PatientMergeSection
-        key={category.id}
-        category={category}
-        source1Patient={this.props.source1PatientData}
-        source2Patient={this.props.source2PatientData}
-        targetPatient={this.state.targetPatientData} />
-    );
+
+    return [
+      <ArrayMerge key="conditions" panelTitle="Condition" objectKey="conditions" patientMerger={this.props.patientMerger} keys={Merge.conditionMergeKeys} />,
+      <ArrayMerge key="encounters" panelTitle="Encounter" objectKey="encounters" patientMerger={this.props.patientMerger} keys={Merge.encounterMergeKeys} />,
+      <ArrayMerge key="medications" panelTitle="Medication" objectKey="medications" patientMerger={this.props.patientMerger} keys={Merge.medicationMergeKeys} />,
+      <ArrayMerge key="procedures" panelTitle="Procedure" objectKey="procedures" patientMerger={this.props.patientMerger} keys={Merge.procedureMergeKeys} />
+    ];
   }
-  
+
   renderedTarget() {
-    if (!this.allSourcesSelected()) {
+    if (!this.state.mergeInProgress) {
       return (
-        <button className="btn btn-secondary merge-button d-flex">
+        <button className="btn btn-secondary merge-button d-flex" disabled={this.state.loading || !this.allSourcesSelected()} onClick={this.beginMerge.bind(this)}>
           Merge
         </button>
       );
     }
-    
+
     return (
       <div className="merge-tool-header-selector target d-flex">
         <div className="merge-tool-header-selector-icon target">
@@ -168,14 +147,16 @@ export class Merge extends Component {
           <span className="icon-line"></span>
         </div>
 
-        Target Name
+        {this.props.patientMerger.targetPatient.getName()}
       </div>
     );
   }
-  
+
   renderedFooter() {
-    if (!this.allPatientsSelected()) { return; }
-    
+    if (!this.state.mergeInProgress) {
+      return;
+    }
+
     return (
       <div className="merge-tool-footer">
         <div className="d-flex justify-content-around">
@@ -183,24 +164,24 @@ export class Merge extends Component {
             <div className="line"></div>
             <div className="record-end"></div>
           </div>
-          
+
           <div className="merge-tool-placeholder"></div>
-          
+
           <div className="target">
             <div className="line"></div>
             <div className="conflict-count">
               <FontAwesome name="exclamation-circle" />
-              0 conflicts to accept
+              {this.props.patientMerger.numConflicts()} conflicts to accept
             </div>
-            
+
             <div className="action-buttons">
               <button type="button" className="btn btn-secondary">Cancel</button>
               <button type="button" className="btn btn-primary">Create Target Record</button>
             </div>
           </div>
-          
+
           <div className="merge-tool-placeholder"></div>
-          
+
           <div className="source source2">
             <div className="line"></div>
             <div className="record-end"></div>
@@ -211,15 +192,6 @@ export class Merge extends Component {
   }
 
   render() {
-    // sets target patient list to be selected source patients only
-    let targetPatientList = [];
-    if (this.state.source1Patient) {
-      targetPatientList.push(this.state.source1Patient);
-    }
-    if (this.state.source2Patient) {
-      targetPatientList.push(this.state.source2Patient);
-    }
-
     return (
       <div className="merge">
         <PageHeader title="Merge" />
@@ -239,30 +211,46 @@ export class Merge extends Component {
                   <span className="icon-line"></span>
                 </div>
 
-                <Select
-                  options={this.filteredSourceList(this.state.source2Patient)}
-                  value={this.state.source1Patient == null ? null : this.state.source1Patient.id}
-                  onChange={this.select2Handler('source1Patient')}
-                  placeholder="Select a source" />
+                {(() => {
+                  if (this.state.mergeInProgress) {
+                    return this.props.patientMerger.source1Patient.getName();
+                  }
+
+                  return (
+                    <Select
+                      options={this.filteredSourceList(this.state.source2Patient)}
+                      value={this.state.source1Patient == null ? null : this.state.source1Patient.id}
+                      onChange={this.select2Handler('source1Patient')}
+                      placeholder="Select a source" />
+                  );
+                })()}
               </div>
-              
+
               <div className="merge-tool-placeholder"></div>
-              
+
               {this.renderedTarget()}
-              
+
               <div className="merge-tool-placeholder"></div>
-              
+
               <div className="merge-tool-header-selector source source2 d-flex">
                 <div className="merge-tool-header-selector-icon source-2">
                   <FontAwesome name="user" />
                   <span className="icon-line"></span>
                 </div>
 
-                <Select
-                  options={this.filteredSourceList(this.state.source1Patient)}
-                  value={this.state.source2Patient == null ? null : this.state.source2Patient.id}
-                  onChange={this.select2Handler('source2Patient')}
-                  placeholder="Select a source" />
+                {(() => {
+                  if (this.state.mergeInProgress) {
+                    return this.props.patientMerger.source2Patient.getName();
+                  }
+
+                  return (
+                    <Select
+                      options={this.filteredSourceList(this.state.source1Patient)}
+                      value={this.state.source2Patient == null ? null : this.state.source2Patient.id}
+                      onChange={this.select2Handler('source2Patient')}
+                      placeholder="Select a source" />
+                  );
+                })()}
               </div>
             </div>
           </div>
@@ -270,7 +258,7 @@ export class Merge extends Component {
           <div className="merge-tool-body">
             {this.renderedPatientData()}
           </div>
-          
+
           {this.renderedFooter()}
         </div>
       </div>
@@ -282,24 +270,24 @@ Merge.displayName = 'Merge';
 
 Merge.propTypes = {
   patientList: PropTypes.array,
+  patientMerger: PropTypes.instanceOf(PatientMerger),
   fetchPatient: PropTypes.func.isRequired,
   fetchPatientList: PropTypes.func.isRequired,
-  source1PatientData: PropTypes.object,
-  source2PatientData: PropTypes.object
+  mergePatients: PropTypes.func.isRequired
 };
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     fetchPatient,
-    fetchPatientList
+    fetchPatientList,
+    mergePatients
   }, dispatch);
 }
 
 function mapStateToProps(state) {
   return {
     patientList: state.patient.patientList,
-    source1PatientData: state.patient.source1PatientData,
-    source2PatientData: state.patient.source2PatientData
+    patientMerger: state.merge.patientMerger
   };
 }
 

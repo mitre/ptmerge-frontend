@@ -6,37 +6,31 @@ import MergeRow from './MergeRow';
 export default class PropertyMerge extends Component {
   constructor(props) {
     super(props);
-    
-    let categoryPath = props.category.id.split('.'); // ex. ['demographics', 'address']
-    let patientData = props[props.patient].data; // gets data object for given patient
-    
-    // does a deep dive for category data for the given patient
-    while (categoryPath.length) {
-      patientData = patientData[categoryPath.shift()]; // shift returns first patientData and removes it
-    }
-    
+
     this.state = {
-      patientData, // filtered to just the data for the given category
-      keys: Object.keys(patientData)
+      displayNameKeys: Object.keys(props.keys)
     };
   }
-  
+
   // renders category data for given patient
-  renderPair(key) {
+  renderPair(displayKey) {
+    let dataKey = this.props.keys[displayKey];
+    let hasConflict = this.props.conflicts && this.props.conflicts.indexOf(dataKey) !== -1;
+
     return (
       <MergeRow
-        key={key}
-        categoryName={key}
-        categoryValue={this.state.patientData[key]}
-        transformName={true}
+        key={displayKey}
+        categoryName={displayKey}
+        categoryValue={this.props.source.get(dataKey)}
+        hasConflict={hasConflict}
         patientType={this.props.patientType} />
     );
   }
-  
+
   render() {
     return (
       <div>
-        {this.state.keys.map((key) => 
+        {this.state.displayNameKeys.map((key) =>
           this.renderPair(key)
         )}
       </div>
@@ -47,9 +41,8 @@ export default class PropertyMerge extends Component {
 PropertyMerge.displayName = 'PropertyMerge';
 
 PropertyMerge.propTypes = {
-  category: PropTypes.shape({
-    id: PropTypes.string.isRequired
-  }).isRequired,
-  patient: PropTypes.string,
-  patientType: PropTypes.string
+  source: PropTypes.any.isRequired,
+  keys: PropTypes.object.isRequired,
+  patientType: PropTypes.string,
+  conflicts: PropTypes.arrayOf(PropTypes.string)
 };

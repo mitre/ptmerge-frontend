@@ -31,7 +31,8 @@ module.exports = {
   plugins: [
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
-      FHIR_SERVER: JSON.stringify(process.env.FHIR_SERVER || 'http://localhost:3001')
+      FHIR_SERVER: JSON.stringify(process.env.FHIR_SERVER || 'http://localhost:3001'),
+      MERGE_SERVER: JSON.stringify(process.env.MERGE_SERVER || 'http://localhost:5000')
     }),
     new CopyWebpackPlugin([
       { from: 'src/images', to: 'assets/images' }
@@ -40,7 +41,6 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: path.join(__dirname, "src", "index.tmpl.html")
     }),
-    new webpack.HotModuleReplacementPlugin(),
     new webpack.ProvidePlugin({
       $: "jquery",
       jQuery: "jquery",

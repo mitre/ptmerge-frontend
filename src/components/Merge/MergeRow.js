@@ -4,14 +4,6 @@ import _ from 'lodash';
 
 // displays row of patient data for the given category
 export default class MergeRow extends Component {
-  name() {
-    if (this.props.transformName) { // humanize it
-      return _.chain(this.props.categoryName).snakeCase().split('_').map(_.upperFirst).join(' ').value();
-    }
-
-    return this.props.categoryName;
-  }
-  
   renderedArrow() {
     if (this.props.patientType === "source1") {
       return <FontAwesome name="arrow-circle-o-right" className="arrow arrow-source1" />;
@@ -19,16 +11,16 @@ export default class MergeRow extends Component {
       return <FontAwesome name="arrow-circle-o-left" className="arrow arrow-source2" />;
     }
   }
-  
+
   render() {
+    let className = `merge-row row patient-${this.props.patientType}${this.props.hasConflict ? ' has-conflict' : ''}`;
+
     return (
-      <div className="merge-row row">
-        <div className="col key">{this.name()}</div>
-        
+      <div className={className}>
+        <div className="col key">{this.props.categoryName}</div>
         <div className="col value">{this.props.categoryValue}</div>
-        
         <div className="merge-tool-placeholder">
-          {this.renderedArrow()}
+          {this.props.hasConflict ? this.renderedArrow() : null}
         </div>
       </div>
     );
@@ -40,5 +32,6 @@ MergeRow.displayName = 'MergeRow';
 MergeRow.propTypes = {
   categoryName: PropTypes.string,
   categoryValue: PropTypes.any,
-  transformName: PropTypes.bool
+  patientType: PropTypes.string,
+  hasConflict: PropTypes.bool
 };

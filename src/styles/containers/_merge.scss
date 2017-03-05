@@ -2,12 +2,12 @@
 
 .merge {
   margin: 0;
-  
+
   .merge-tool {
     .merge-tool-placeholder {
       width: 50px;
     }
-    
+
     .merge-tool-header,
     .merge-tool-body,
     .merge-tool-footer {
@@ -16,10 +16,10 @@
         &.source2 { margin-right: 25px; }
       }
     }
-    
+
     .merge-tool-header {
       margin-bottom: -3px;
-      
+
       .merge-tool-header-titles {
         margin-bottom: 5px;
         text-align: center;
@@ -31,7 +31,7 @@
 
       .merge-tool-header-selectors {
         margin: 0;
-        
+
         .merge-button {
           background-color: $brand-secondary;
           color: $white;
@@ -44,7 +44,7 @@
           width: 400px;
           background-color: $white;
           padding: 5px 10px 0 10px;
-          
+
           &.source {
             margin-bottom: 3px;
           }
@@ -86,7 +86,7 @@
     .merge-tool-body,
     .merge-tool-footer {
       background-color: $white;
-      
+
       .line {
         display: block;
         position: absolute;
@@ -96,7 +96,7 @@
         top: 0;
         background-color: #EBEBEB;
       }
-      
+
       .source,
       .target {
         position: relative;
@@ -104,26 +104,25 @@
         width: 400px;
         padding-bottom: 1px;
       }
-      
+
       .target {
         border-left: 3px solid $brand-secondary;
         border-right: 3px solid $brand-secondary;
       }
-      
+
       .merge-row {
         .key {
           text-align: right;
           font-weight: bold;
         }
-        
+
         .arrow {
           position: absolute;
-          color: $light-gray;
-          
+
           &.arrow-source1 {
             right: -25px;
           }
-          
+
           &.arrow-source2 {
             left: -20px;
           }
@@ -135,33 +134,49 @@
       background-color: #F5F5F5;
       margin: 0;
       padding: 0;
-      
+
       .line {
         height: 50%;
       }
-      
+
       .source {
         height: 40px;
-        
+
         // &.source1 { margin-left: 2px }
         // &.source2 { margin-right: 2px }
       }
-      
+
       .target {
         margin-bottom: 40px;
         border-bottom: 3px solid $brand-secondary;
       }
-      
+
       .conflict-count {
         margin: 10px 40px 10px 10px;
         color: $red;
         text-align: center;
         font-size: 1.2em;
       }
-      
+
       .action-buttons {
         float: right;
       }
+    }
+  }
+
+  .has-conflict.patient-source1 {
+    background-color: #49C6DF;
+
+    .fa-arrow-circle-o-right {
+      color: #49C6DF;
+    }
+  }
+
+  .has-conflict.patient-source2 {
+    background-color: #A16CDB;
+
+    .fa-arrow-circle-o-left {
+      color: #A16CDB;
     }
   }
 }
