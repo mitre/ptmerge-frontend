@@ -37,15 +37,22 @@ export default class MergeConflict {
   }
 
   isResolved() {
-    return false;
+    return this.resolved;
   }
 
-  unresolvedConflicts() {
+  getUnresolvedConflicts() {
     return this.mergeConflict.fields;
   }
 
   hasUnresolvedConflicts(key) {
     return this.mergeConflict.fields.indexOf(key) !== -1;
+  }
+
+  setFromSource(key, source) {
+    let patientObject = this[`${source}PatientObject`];
+    if (patientObject) {
+      this.targetPatientObject.set(key, patientObject.get(key));
+    }
   }
 
   isLinkable() {

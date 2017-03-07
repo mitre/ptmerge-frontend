@@ -7,9 +7,9 @@ import _ from 'lodash';
 export default class MergeRow extends Component {
   renderedArrow() {
     if (this.props.patientType === "source1") {
-      return <FontAwesome name="arrow-circle-o-right" className="arrow arrow-source1" />;
+      return <FontAwesome name="arrow-circle-o-right" className="arrow arrow-source1" onClick={() => this.props.takeSourceValue('source1')} />;
     } else if (this.props.patientType === "source2") {
-      return <FontAwesome name="arrow-circle-o-left" className="arrow arrow-source2" />;
+      return <FontAwesome name="arrow-circle-o-left" className="arrow arrow-source2" onClick={() => this.props.takeSourceValue('source2')} />;
     }
   }
 
@@ -39,5 +39,6 @@ MergeRow.propTypes = {
   categoryValue: PropTypes.any,
   patientType: PropTypes.string,
   hasConflict: PropTypes.bool,
-  conflictFrom: PropTypes.string
+  conflictFrom: PropTypes.string,
+  takeSourceValue: PropTypes.func.isRequired
 };

@@ -48,7 +48,7 @@ export default class ArrayMerge extends Component {
       let object = objects[i];
       let conflict = this.props.patientMerger.conflictedTargetObjects[object.toKey()];
       if (conflict) {
-        count += conflict.unresolvedConflicts().length;
+        count += conflict.getUnresolvedConflicts().length;
       }
     }
     return count;
@@ -89,7 +89,7 @@ export default class ArrayMerge extends Component {
       <div className="d-flex justify-content-around" key={index}>
         <div className="source source1">
           <div className="line"></div>
-          {source1 == null ? this.renderedEmptyResource('source1') : <PropertyMerge source={source1} keys={this.props.keys} conflict={source1Conflict} patientType="source1" />}
+          {source1 == null ? this.renderedEmptyResource('source1') : <PropertyMerge source={source1} keys={this.props.keys} conflict={source1Conflict} patientType="source1" onUpdate={this.forceUpdate.bind(this)} />}
           {source1 == null ? null : <div className="divider"></div>}
         </div>
 
@@ -105,7 +105,7 @@ export default class ArrayMerge extends Component {
 
         <div className="source source2">
           <div className="line"></div>
-          {source2 == null ? this.renderedEmptyResource('source2') : <PropertyMerge source={source2} keys={this.props.keys} conflict={source2Conflict} patientType="source2" />}
+          {source2 == null ? this.renderedEmptyResource('source2') : <PropertyMerge source={source2} keys={this.props.keys} conflict={source2Conflict} patientType="source2" onUpdate={this.forceUpdate.bind(this)} />}
           {source2 == null ? null : <div className="divider"></div>}
         </div>
       </div>

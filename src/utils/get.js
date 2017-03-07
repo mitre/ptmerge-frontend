@@ -1,3 +1,5 @@
+import isArrayKey from './is_array_key';
+
 export default function get(obj, keyName) {
   if (keyName == null || keyName === '') {
     return undefined;
@@ -10,7 +12,7 @@ export default function get(obj, keyName) {
     }
 
     let key = parts[i];
-    if (key[0] === '[' && key[key.length - 1] === ']') {
+    if (isArrayKey(key)) {
       obj = obj[parseInt(key.slice(1, -1), 10)];
     } else {
       obj = obj[key];

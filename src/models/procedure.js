@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-import get from '../utils/get';
+import FhirModel from './fhir_model';
 
 const STRIP_FIELDS = Object.freeze([
   "id",
@@ -8,12 +8,9 @@ const STRIP_FIELDS = Object.freeze([
   "subject.referenceid"
 ]);
 
-export default class Procedure {
+export default class Procedure extends FhirModel {
   constructor(bundle) {
-    this._bundle = bundle;
-
-    this.id = bundle.id;
-    this.lastUpdated = moment(bundle.meta.lastUpdated);
+    super(bundle);
 
     this.status = bundle.status;
 
@@ -26,12 +23,8 @@ export default class Procedure {
     this.performedDate = moment(bundle.performedDateTime);
   }
 
-  get(keyName) {
-    return get(this._bundle, keyName);
-  }
-
-  toKey() {
-    return `Procedure:${this.id}`;
+  get modelName() {
+    return 'Procedure';
   }
 
   matches(obj) {

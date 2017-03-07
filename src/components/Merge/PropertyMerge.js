@@ -14,19 +14,29 @@ export default class PropertyMerge extends Component {
     };
   }
 
+  takeSourceValue(conflict, dataKey) {
+    return (source) => {
+      conflict.setFromSource(dataKey, source);
+      if (this.props.onUpdate) {
+        this.props.onUpdate();
+      }
+    };
+  }
+
   // renders category data for given patient
   renderPair(displayKey) {
     let dataKey = this.props.keys[displayKey];
     let conflict = this.props.conflict;
-    let hasConflict = conflict && conflict.mergeConflict.fields.indexOf(dataKey) !== -1;
+    let hasConflict = conflict && conflict.hasUnresolvedConflicts(dataKey);
     let value = this.props.source.get(dataKey);
 
     let params = {
+      hasConflict,
       key: displayKey,
       categoryName: displayKey,
       categoryValue: value,
       patientType: this.props.patientType,
-      hasConflict
+      takeSourceValue: this.takeSourceValue(conflict, dataKey)
     };
 
     if (hasConflict && this.props.patientType === 'target') {
@@ -59,5 +69,6 @@ PropertyMerge.propTypes = {
   source: PropTypes.any.isRequired,
   keys: PropTypes.object.isRequired,
   patientType: PropTypes.string,
-  conflict: PropTypes.instanceOf(MergeConflict)
+  conflict: PropTypes.instanceOf(MergeConflict),
+  onUpdate: PropTypes.func
 };

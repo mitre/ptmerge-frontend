@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-import get from '../utils/get';
+import FhirModel from './fhir_model';
 
 const STRIP_FIELDS = Object.freeze([
   "id",
@@ -8,12 +8,10 @@ const STRIP_FIELDS = Object.freeze([
   "patient.referenceid"
 ]);
 
-export default class Encounter {
+export default class Encounter extends FhirModel {
   constructor(bundle) {
-    this._bundle = bundle;
+    super(bundle);
 
-    this.id = bundle.id;
-    this.lastUpdated = moment(bundle.meta.lastUpdated);
     this.status = bundle.status;
     this.classType = bundle['class'].code;
 
@@ -29,12 +27,8 @@ export default class Encounter {
     };
   }
 
-  get(keyName) {
-    return get(this._bundle, keyName);
-  }
-
-  toKey() {
-    return `Encounter:${this.id}`;
+  get modelName() {
+    return 'Encounter';
   }
 
   matches(obj) {

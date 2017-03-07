@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-import get from '../utils/get';
+import FhirModel from './fhir_model';
 
 const STRIP_FIELDS = Object.freeze([
   "id",
@@ -8,12 +8,10 @@ const STRIP_FIELDS = Object.freeze([
   "subject.referenceid"
 ]);
 
-export default class Medication {
+export default class Medication extends FhirModel {
   constructor(bundle) {
-    this._bundle = bundle;
+    super(bundle);
 
-    this.id = bundle.id;
-    this.lastUpdated = moment(bundle.meta.lastUpdated);
     this.status = bundle.status;
 
     let [coding] = bundle.medicationCodeableConcept.coding;
@@ -29,12 +27,8 @@ export default class Medication {
     };
   }
 
-  get(keyName) {
-    return get(this._bundle, keyName);
-  }
-
-  toKey() {
-    return `Medication:${this.id}`;
+  get modelName() {
+    return 'Medication';
   }
 
   matches(obj) {

@@ -1,5 +1,7 @@
 import moment from 'moment';
 
+import FhirModel from './fhir_model';
+
 import Condition from './condition';
 import Encounter from './encounter';
 import Medication from './medication';
@@ -9,16 +11,16 @@ const STRIP_FIELDS = Object.freeze([
   "id"
 ]);
 
-export default class Patient {
+export default class Patient extends FhirModel {
   constructor(bundle) {
+    let patient = findResource(bundle, 'Patient');
+
+    super(patient);
+
+    // reset bundle
     this._bundle = bundle;
 
     // set patient data
-    let patient = findResource(bundle, 'Patient');
-
-    this.id = patient.id;
-    this.lastUpdated = moment(patient.meta.lastUpdated);
-
     let [name] = patient.name;
     this.name = {
       family: name.family,
@@ -46,8 +48,8 @@ export default class Patient {
     this.procedures = mapResources(bundle, 'Procedure', Procedure);
   }
 
-  getId() {
-    return this.id;
+  get modelName() {
+    return 'Procedure';
   }
 
   getName() {

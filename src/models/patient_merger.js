@@ -21,7 +21,7 @@ export default class PatientMerger {
     let count = 0;
     for (let i = 0; i < this.conflicts.length; ++i) {
       if (!this.conflicts[i].isResolved()) {
-        count += this.conflicts[i].unresolvedConflicts().length;
+        count += this.conflicts[i].getUnresolvedConflicts().length;
       }
     }
     return count;
