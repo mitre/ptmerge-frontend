@@ -8,6 +8,17 @@ const STRIP_FIELDS = Object.freeze([
   "patient.referenceid"
 ]);
 
+export const encounterMergeKeys = Object.freeze({
+  'Encounter': 'type.[0].coding.[0].display',
+  'Code': 'type.[0].coding.[0].code',
+  'System': 'type.[0].coding.[0].system',
+  'Class': 'class.code',
+  'Status': 'status',
+  'Start Date': 'period.start',
+  'End Date': 'period.end',
+  'Updated': 'meta.lastUpdated'
+});
+
 export default class Encounter extends FhirModel {
   constructor(bundle) {
     super(bundle);

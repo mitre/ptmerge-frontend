@@ -8,6 +8,16 @@ const STRIP_FIELDS = Object.freeze([
   "subject.referenceid"
 ]);
 
+export const medicationMergeKeys = Object.freeze({
+  'Medication': 'medicationCodeableConcept.coding.[0].display',
+  'Code': 'medicationCodeableConcept.coding.[0].code',
+  'System': 'medicationCodeableConcept.coding.[0].system',
+  'Status': 'status',
+  'Start Date': 'effectivePeriod.start',
+  'End Date': 'effectivePeriod.end',
+  'Updated': 'meta.lastUpdated'
+});
+
 export default class Medication extends FhirModel {
   constructor(bundle) {
     super(bundle);

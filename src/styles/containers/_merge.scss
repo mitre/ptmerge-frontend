@@ -120,18 +120,20 @@
           text-align: right;
           font-weight: bold;
         }
+      }
 
-        .arrow {
-          position: absolute;
-          cursor: pointer;
+      .arrow {
+        position: absolute;
+        cursor: pointer;
 
-          &.arrow-source1 {
-            right: -25px;
-          }
+        &.arrow-source1 {
+          right: -25px;
+          color: $source1;
+        }
 
-          &.arrow-source2 {
-            left: -20px;
-          }
+        &.arrow-source2 {
+          left: -25px;
+          color: $source2;
         }
       }
     }
@@ -164,16 +166,25 @@
 
       .divider {
         border-bottom: 2px dashed $lighter-gray;
-        margin-left: 30px;
+        margin: 10px 0 10px 30px;
       }
 
       .panel-body .d-flex:last-child .divider {
         border-bottom: none;
       }
+
+      .empty-resource {
+        .empty-resource-text {
+          color: $light-gray;
+          text-align: center;
+          margin-top: 10px;
+          font-style: italic;
+        }
+      }
     }
 
     .merge-tool-footer {
-      background-color: #F5F5F5;
+      background-color: $lighter-gray;
       margin: 0;
       padding: 0;
 
@@ -197,6 +208,10 @@
         font-size: 1.2em;
       }
 
+      .conflict-count.done {
+        color: $green;
+      }
+
       .action-buttons {
         text-align: center;
       }
@@ -215,18 +230,10 @@
   .has-conflict.patient-source1,
   .has-conflict.value-from-source1 {
     background-color: $source1opaque;
-
-    .fa-arrow-circle-o-right {
-      color: $source1;
-    }
   }
 
   .has-conflict.patient-source2,
   .has-conflict.value-from-source2 {
     background-color: $source2opaque;
-
-    .fa-arrow-circle-o-left {
-      color: $source2;
-    }
   }
 }

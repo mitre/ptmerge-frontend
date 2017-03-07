@@ -8,6 +8,14 @@ const STRIP_FIELDS = Object.freeze([
   "subject.referenceid"
 ]);
 
+export const conditionMergeKeys = Object.freeze({
+  'Condition': 'code.coding.[0].display',
+  'Code': 'code.coding.[0].code',
+  'System': 'code.coding.[0].system',
+  'Onset Date': 'onsetDateTime',
+  'Updated': 'meta.lastUpdated'
+});
+
 export default class Condition extends FhirModel {
   constructor(bundle) {
     super(bundle);

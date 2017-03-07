@@ -8,6 +8,15 @@ const STRIP_FIELDS = Object.freeze([
   "subject.referenceid"
 ]);
 
+export const procedureMergeKeys = Object.freeze({
+  'Procedure': 'code.coding.[0].display',
+  'Code': 'code.coding.[0].code',
+  'System': 'code.coding.[0].system',
+  'Status': 'status',
+  'Performed Date': 'performedDateTime',
+  'Updated': 'meta.lastUpdated'
+});
+
 export default class Procedure extends FhirModel {
   constructor(bundle) {
     super(bundle);

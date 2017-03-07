@@ -9,6 +9,7 @@ import Procedure from './Procedure';
 
 // classes that we can cross link
 const LINKABLE_OBJECTS = [
+  'Patient',
   'Condition',
   'Encounter',
   'MedicationStatement',
@@ -24,16 +25,44 @@ export default class MergeConflict {
 
     let [objectClass, objectId] = bundle.issue[0].diagnostics.split(':');
 
+    let fields = alterKeySyntax(toClass(objectClass).stripConflictFields(bundle.issue[0].location.slice()));
+
     this.mergeConflict = {
       objectId,
       objectClass,
-      fields: toClass(objectClass).stripConflictFields(bundle.issue[0].location.slice())
+      fields,
+      _fields: fields.slice()
     };
     this.resolved = false;
 
     this.source1PatientObject = null;
     this.source2PatientObject = null;
     this.targetPatientObject = null;
+  }
+
+  markFieldsResolved(fields) {
+    if (fields == null) {
+      this.markResolved();
+      return;
+    }
+
+    for (let i = 0; i < fields.length; ++i) {
+      let field = fields[i];
+      let index = this.mergeConflict.fields.indexOf(field);
+
+      if (index !== -1) {
+        this.mergeConflict.fields.splice(index, 1);
+      }
+    }
+
+    if (this.mergeConflict.fields.length === 0) {
+      this.markResolved();
+    }
+  }
+
+  markResolved() {
+    this.mergeConflict.fields = [];
+    this.resolved = true;
   }
 
   isResolved() {
@@ -60,16 +89,22 @@ export default class MergeConflict {
   }
 
   linkPatientObjects(source1Patient, source2Patient, targetPatient) {
-    let key = transformObjectClassKey(this.mergeConflict.objectClass);
+    if (this.mergeConflict.objectClass === 'Patient') {
+      this.targetPatientObject = targetPatient;
+      this.source1PatientObject = source1Patient;
+      this.source2PatientObject = source2Patient;
+    } else {
+      let key = transformObjectClassKey(this.mergeConflict.objectClass);
 
-    let targetPatientObject = targetPatient[key].find((obj) => obj.id === this.mergeConflict.objectId);
-    if (targetPatientObject == null) {
-      return;
+      let targetPatientObject = targetPatient[key].find((obj) => obj.id === this.mergeConflict.objectId);
+      if (targetPatientObject == null) {
+        return;
+      }
+
+      this.targetPatientObject = targetPatientObject;
+      this.source1PatientObject = source1Patient[key].find((obj) => obj.matches(targetPatientObject));
+      this.source2PatientObject = source2Patient[key].find((obj) => obj.matches(targetPatientObject));
     }
-
-    this.targetPatientObject = targetPatientObject;
-    this.source1PatientObject = source1Patient[key].find((obj) => obj.matches(targetPatientObject));
-    this.source2PatientObject = source2Patient[key].find((obj) => obj.matches(targetPatientObject));
   }
 }
 
@@ -93,4 +128,8 @@ function toClass(key) {
   } else if (key === 'Procedure') {
     return Procedure;
   }
+}
+
+function alterKeySyntax(conflictKeys) {
+  return conflictKeys.map((key) => key.replace('[', '.['));
 }

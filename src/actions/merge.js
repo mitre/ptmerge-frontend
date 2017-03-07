@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 import {
-  MERGE_PATIENTS
+  MERGE_PATIENTS,
+  ABORT_MERGE_PATIENTS
 } from './types';
 
 export function mergePatients(source1PatientId, source2PatientId) {
@@ -32,6 +33,16 @@ export function mergePatients(source1PatientId, source2PatientId) {
           };
         }));
       }
+    })
+  };
+}
+
+export function abortMerge(mergeId) {
+  return {
+    type: ABORT_MERGE_PATIENTS,
+    payload: axios({
+      method: 'post',
+      url: `${MERGE_SERVER}/merge/${mergeId}/abort`
     })
   };
 }

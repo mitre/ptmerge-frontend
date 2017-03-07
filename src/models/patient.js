@@ -7,9 +7,36 @@ import Encounter from './encounter';
 import Medication from './medication';
 import Procedure from './procedure';
 
-const STRIP_FIELDS = Object.freeze([
-  "id"
-]);
+const STRIP_FIELDS = Object.freeze([ "id" ]);
+
+export const addressMergeKeys = Object.freeze({
+  'City': 'address.[0].city',
+  'Line1': 'address.[0].line.[0]',
+  'Line2': 'address.[0].line.[1]',
+  'State': 'address.[0].state',
+  'Use': 'address.[0].use'
+});
+
+export const nameMergeKeys = Object.freeze({
+  'Family': 'name.[0].family',
+  'Given': 'name.[0].given.[0]'
+});
+
+export const maritalStatusMergeKeys = Object.freeze({
+  'Code': 'maritalStatus.coding.[0].code',
+  'Display': 'maritalStatus.coding.[0].display',
+  'System': 'maritalStatus.coding.[0].system'
+});
+
+export const metaMergeKeys = Object.freeze({ 'Last Updated': 'meta.lastUpdated' });
+export const dateOfBirthMergeKeys = Object.freeze({ 'Date of Birth': 'birthDate' });
+export const genderMergeKeys = Object.freeze({ 'Gender': 'gender' });
+
+export const telecomMergeKeys = Object.freeze({
+  'System': 'telecom.[0].system',
+  'Number': 'telecom.[0].value',
+  'Use': 'telecom.[0].value'
+});
 
 export default class Patient extends FhirModel {
   constructor(bundle) {
@@ -17,8 +44,7 @@ export default class Patient extends FhirModel {
 
     super(patient);
 
-    // reset bundle
-    this._bundle = bundle;
+    this._fullBundle = bundle;
 
     // set patient data
     let [name] = patient.name;
@@ -49,7 +75,7 @@ export default class Patient extends FhirModel {
   }
 
   get modelName() {
-    return 'Procedure';
+    return 'Patient';
   }
 
   getName() {

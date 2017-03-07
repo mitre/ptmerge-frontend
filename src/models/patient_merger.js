@@ -17,6 +17,10 @@ export default class PatientMerger {
     this.conflictedTargetObjects = targetObjects;
   }
 
+  getMergeId() {
+    return this.mergeId;
+  }
+
   numConflicts() {
     let count = 0;
     for (let i = 0; i < this.conflicts.length; ++i) {
@@ -25,6 +29,34 @@ export default class PatientMerger {
       }
     }
     return count;
+  }
+
+  deleteResource(resource) {
+    let conflict = this.conflictedTargetObjects[resource.toKey()];
+    if (conflict) {
+      conflict.markResolved();
+    }
+
+    resource.delete();
+  }
+
+  resolveConflicts(objectKey, resolvedFields) {
+    let targetObjects;
+
+    if (objectKey === 'patient') {
+      targetObjects = [this.targetPatient];
+    } else {
+      targetObjects = this.targetPatient[objectKey];
+    }
+
+    for (let i = 0; i < targetObjects.length; ++i) {
+      let resource = targetObjects[i];
+      let conflict = this.conflictedTargetObjects[resource.toKey()];
+
+      if (conflict) {
+        conflict.markFieldsResolved(resolvedFields);
+      }
+    }
   }
 }
 

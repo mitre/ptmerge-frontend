@@ -5,6 +5,7 @@
 .collapsible-panel {
   border: 0;
   box-shadow: none;
+  border-bottom: 1px solid $very-light-gray;
 
   &.is-nested {
     .panel-heading {

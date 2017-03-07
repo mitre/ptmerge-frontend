@@ -6,52 +6,27 @@ import FontAwesome from 'react-fontawesome';
 import Select from 'react-select';
 
 import { fetchPatient, fetchPatientList } from '../actions/patient';
-import { mergePatients } from '../actions/merge';
+import { mergePatients, abortMerge } from '../actions/merge';
 
 import PageHeader from '../components/Header/PageHeader';
-import ArrayMerge from '../components/Merge/ArrayMerge';
+import MergeCategory from '../components/Merge/MergeCategory';
 
 import PatientMerger from '../models/patient_merger';
+import { conditionMergeKeys } from '../models/condition';
+import { encounterMergeKeys } from '../models/encounter';
+import { medicationMergeKeys } from '../models/medication';
+import {
+  addressMergeKeys,
+  nameMergeKeys,
+  dateOfBirthMergeKeys,
+  genderMergeKeys,
+  maritalStatusMergeKeys,
+  metaMergeKeys,
+  telecomMergeKeys
+} from '../models/patient';
+import { procedureMergeKeys } from '../models/procedure';
 
 export class Merge extends Component {
-  static conditionMergeKeys = Object.freeze({
-    'Condition': 'code.coding.[0].display',
-    'Code': 'code.coding.[0].code',
-    'System': 'code.coding.[0].system',
-    'Onset Date': 'onsetDateTime',
-    'Updated': 'meta.lastUpdated'
-  });
-
-  static encounterMergeKeys = Object.freeze({
-    'Encounter': 'type.[0].coding.[0].display',
-    'Code': 'type.[0].coding.[0].code',
-    'System': 'type.[0].coding.[0].system',
-    'Class': 'class.code',
-    'Status': 'status',
-    'Start Date': 'period.start',
-    'End Date': 'period.end',
-    'Updated': 'meta.lastUpdated'
-  });
-
-  static medicationMergeKeys = Object.freeze({
-    'Medication': 'medicationCodeableConcept.coding.[0].display',
-    'Code': 'medicationCodeableConcept.coding.[0].code',
-    'System': 'medicationCodeableConcept.coding.[0].system',
-    'Status': 'status',
-    'Start Date': 'effectivePeriod.start',
-    'End Date': 'effectivePeriod.end',
-    'Updated': 'meta.lastUpdated'
-  });
-
-  static procedureMergeKeys = Object.freeze({
-    'Procedure': 'code.coding.[0].display',
-    'Code': 'code.coding.[0].code',
-    'System': 'code.coding.[0].system',
-    'Status': 'status',
-    'Performed Date': 'performedDateTime',
-    'Updated': 'meta.lastUpdated'
-  });
-
   constructor(props) {
     super(props);
 
@@ -102,6 +77,18 @@ export class Merge extends Component {
     this.props.mergePatients(this.state.source1Patient.id, this.state.source2Patient.id);
   }
 
+  abortMerge() {
+    this.setState({ loading: true });
+    this.props.abortMerge(this.props.patientMerger.getMergeId()).then(() => {
+      this.setState({
+        source1Patient: null,
+        source2Patient: null,
+        mergeInProgress: false,
+        loading: false
+      });
+    });
+  }
+
   // excludes selected source patient from other source patient list -- prevents selecting the
   // same patient for both sources
   filteredSourceList(excludedPatient) {
@@ -118,16 +105,43 @@ export class Merge extends Component {
 
   // renders categories with patient data for selected source and target patients
   renderedPatientData() {
-    if (!this.state.mergeInProgress) {
-      // only renders when merge is in progress
-      return;
-    }
+    if (!this.state.mergeInProgress) { return; }
+
+    let params = {
+      updateParentView: this.forceUpdate.bind(this),
+      onAccept: (objectKey, keys) => {
+        let resolvedKeys = keys == null ? null : Object.values(keys);
+        this.props.patientMerger.resolveConflicts(objectKey, resolvedKeys);
+        this.forceUpdate();
+      }
+    };
 
     return [
-      <ArrayMerge key="conditions" panelTitle="Condition" objectKey="conditions" patientMerger={this.props.patientMerger} keys={Merge.conditionMergeKeys} />,
-      <ArrayMerge key="encounters" panelTitle="Encounter" objectKey="encounters" patientMerger={this.props.patientMerger} keys={Merge.encounterMergeKeys} />,
-      <ArrayMerge key="medications" panelTitle="Medication" objectKey="medications" patientMerger={this.props.patientMerger} keys={Merge.medicationMergeKeys} />,
-      <ArrayMerge key="procedures" panelTitle="Procedure" objectKey="procedures" patientMerger={this.props.patientMerger} keys={Merge.procedureMergeKeys} />
+      <MergeCategory {...params} key="allergy" panelTitle="Allergies" objectKey={null} patientMerger={this.props.patientMerger} keys={null} />,
+      <MergeCategory {...params} key="behavior" panelTitle="Behaviors" objectKey={null} patientMerger={this.props.patientMerger} keys={null} />,
+      <MergeCategory {...params} key="conditions" panelTitle="Conditions" objectKey="conditions" patientMerger={this.props.patientMerger} keys={conditionMergeKeys} />,
+      <MergeCategory {...params} key="demographics" panelTitle="Demographics" objectKey="patient" patientMerger={this.props.patientMerger} keys={null} hasNested={true}>
+        <div>
+          <MergeCategory {...params} key="address" panelTitle="Address" objectKey="patient" patientMerger={this.props.patientMerger} keys={addressMergeKeys} isNested={true} />
+          <MergeCategory {...params} key="dateOfBirth" panelTitle="Date of Birth" objectKey="patient" patientMerger={this.props.patientMerger} keys={dateOfBirthMergeKeys} isNested={true} />
+          <MergeCategory {...params} key="gender" panelTitle="Gender" objectKey="patient" patientMerger={this.props.patientMerger} keys={genderMergeKeys} isNested={true} />
+          <MergeCategory {...params} key="healthInsurance" panelTitle="Health Insurance" objectKey={null} patientMerger={this.props.patientMerger} keys={null} isNested={true} />
+          <MergeCategory {...params} key="meta" panelTitle="Meta" objectKey="patient" patientMerger={this.props.patientMerger} keys={metaMergeKeys} isNested={true} />
+          <MergeCategory {...params} key="name" panelTitle="Name" objectKey="patient" patientMerger={this.props.patientMerger} keys={nameMergeKeys} isNested={true} />
+          <MergeCategory {...params} key="maritalStatus" panelTitle="Marital Status" objectKey="patient" patientMerger={this.props.patientMerger} keys={maritalStatusMergeKeys} isNested={true} />
+          <MergeCategory {...params} key="placeOfBirth" panelTitle="Place of Birth" objectKey={null} patientMerger={this.props.patientMerger} keys={null} isNested={true} />
+          <MergeCategory {...params} key="socialSecurityNumber" panelTitle="Social Security Number" objectKey={null} patientMerger={this.props.patientMerger} keys={null} isNested={true} />
+          <MergeCategory {...params} key="telecom" panelTitle="Telecom" objectKey="patient" patientMerger={this.props.patientMerger} keys={telecomMergeKeys} isNested={true} />
+        </div>
+      </MergeCategory>,
+      <MergeCategory {...params} key="encounters" panelTitle="Encounters" objectKey="encounters" patientMerger={this.props.patientMerger} keys={encounterMergeKeys} />,
+      <MergeCategory {...params} key="familyHistory" panelTitle="Family History" objectKey={null} patientMerger={this.props.patientMerger} keys={null} />,
+      <MergeCategory {...params} key="immunization" panelTitle="Immunizations" objectKey={null} patientMerger={this.props.patientMerger} keys={null} />,
+      <MergeCategory {...params} key="lab" panelTitle="Lab" objectKey={null} patientMerger={this.props.PatientMerger} keys={null} />,
+      <MergeCategory {...params} key="lifeHistory" panelTitle="Life History" objectKey={null} patientMerger={this.props.PatientMerger} keys={null} />,
+      <MergeCategory {...params} key="medications" panelTitle="Medications" objectKey="medications" patientMerger={this.props.patientMerger} keys={medicationMergeKeys} />,
+      <MergeCategory {...params} key="procedures" panelTitle="Procedures" objectKey="procedures" patientMerger={this.props.patientMerger} keys={procedureMergeKeys} />,
+      <MergeCategory {...params} key="vitals" panelTitle="Vitals" objectKey={null} patientMerger={this.props.patientMerger} keys={null} />
     ];
   }
 
@@ -157,6 +171,8 @@ export class Merge extends Component {
       return;
     }
 
+    let numConflicts = this.props.patientMerger.numConflicts();
+
     return (
       <div className="merge-tool-footer">
         <div className="d-flex justify-content-around">
@@ -167,14 +183,14 @@ export class Merge extends Component {
           <div className="merge-tool-placeholder"></div>
 
           <div className="target">
-            <div className="conflict-count">
-              <FontAwesome name="exclamation-circle" />
-              {this.props.patientMerger.numConflicts()} conflicts to accept
+            <div className={`conflict-count${numConflicts === 0 ? ' done' : ''}`}>
+              <FontAwesome name={numConflicts === 0 ? 'check-circle' : 'exclamation-circle'} />{' '}
+              {numConflicts === 0 ? 'All conflicts resolved' : `${numConflicts} conflicts to accept`}
             </div>
 
             <div className="action-buttons">
-              <button type="button" className="btn btn-secondary">Cancel</button>
-              <button type="button" className="btn btn-primary">Create Target Record</button>
+              <button type="button" className="btn btn-secondary" disabled={this.state.loading} onClick={this.abortMerge.bind(this)}>Cancel</button>
+              <button type="button" className="btn btn-primary" disabled={this.state.loading || numConflicts > 0}>Create Target Record</button>
             </div>
           </div>
 
@@ -270,14 +286,16 @@ Merge.propTypes = {
   patientMerger: PropTypes.instanceOf(PatientMerger),
   fetchPatient: PropTypes.func.isRequired,
   fetchPatientList: PropTypes.func.isRequired,
-  mergePatients: PropTypes.func.isRequired
+  mergePatients: PropTypes.func.isRequired,
+  abortMerge: PropTypes.func.isRequired
 };
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     fetchPatient,
     fetchPatientList,
-    mergePatients
+    mergePatients,
+    abortMerge
   }, dispatch);
 }
 

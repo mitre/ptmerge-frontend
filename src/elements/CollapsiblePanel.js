@@ -9,8 +9,7 @@ export default class CollapsiblePanel extends Component {
     super(...args);
 
     this.state = {
-      open: true,
-      chevronToggle: false
+      open: this.props.defaultOpen == null ? false : this.props.defaultOpen
     };
   }
 
@@ -32,10 +31,15 @@ export default class CollapsiblePanel extends Component {
 
   renderedButtons() {
     if (this.hasConflicts()) {
+      let clickHandler = (event) => {
+        event.stopPropagation();
+        this.props.onAccept();
+      };
+
       return (
         <div className="has-conflict-buttons">
           <button type="button" className="btn btn-primary send-mail-button"><FontAwesome name="paper-plane" /></button>
-          <button type="button" className="btn btn-primary accept-conflict-button">Accept</button>
+          <button type="button" className="btn btn-primary accept-conflict-button" onClick={clickHandler}>{this.props.hasNested ? 'Accept All' : 'Accept'}</button>
         </div>
       );
     }
@@ -43,7 +47,7 @@ export default class CollapsiblePanel extends Component {
 
   render() {
     let chevronClassNames = classNames('collapsible-chevron', 'pull-right', 'fa', 'fa-chevron-circle-down', 'rotate',
-                                       { left: this.state.chevronToggle }, { 'has-conflicts': this.hasConflicts()});
+                                       { left: !this.state.open }, { 'has-conflicts': this.hasConflicts()});
     let panelClassNames = classNames('panel', 'collapsible-panel',
                                      { 'is-nested': this.props.isNested },
                                      { 'has-nested': this.props.hasNested });
@@ -52,7 +56,7 @@ export default class CollapsiblePanel extends Component {
     return (
       <div className={panelClassNames}>
         <div className={panelHeadingClassNames}>
-          <a onClick={ ()=> this.setState({ open: !this.state.open, chevronToggle: !this.state.chevronToggle })}>
+          <a onClick={ ()=> this.setState({ open: !this.state.open, chevronToggle: !this.state.open })}>
             <span className="panel-title">{this.panelIcon()} {`${this.props.panelTitle}`}</span>
 
             <i className={chevronClassNames}></i>
@@ -74,12 +78,14 @@ export default class CollapsiblePanel extends Component {
 CollapsiblePanel.displayName = "CollapsiblePanel";
 
 CollapsiblePanel.propTypes = {
-  panelTitle: PropTypes.string.isRequired,
-  panelIcon: PropTypes.string,
+  children: PropTypes.element,
   conflictCount: PropTypes.number,
-  isNested: PropTypes.bool,
   hasNested: PropTypes.bool,
-  children: PropTypes.element
+  isNested: PropTypes.bool,
+  defaultOpen: PropTypes.bool,
+  panelIcon: PropTypes.string,
+  panelTitle: PropTypes.string.isRequired,
+  onAccept: PropTypes.func
 };
 
 CollapsiblePanel.defaultProps = { isNested: false, hasNested: false };

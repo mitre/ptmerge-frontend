@@ -9,6 +9,7 @@ export default class FhirModel {
 
     this.id = bundle.id;
     this.lastUpdated = moment(bundle.meta.lastUpdated);
+    this._pendingDelete = false;
   }
 
   get modelName() {
@@ -34,6 +35,14 @@ export default class FhirModel {
 
   matches(/* obj */) {
     return false;
+  }
+
+  delete() {
+    this._pendingDelete = true;
+  }
+
+  isPendingDeletion() {
+    return this._pendingDelete;
   }
 
   static stripConflictFields(fields) {
