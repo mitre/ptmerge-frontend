@@ -2,6 +2,12 @@ import moment from 'moment';
 
 import get from '../utils/get';
 
+const STRIP_FIELDS = Object.freeze([
+  "id",
+  "patient.reference",
+  "patient.referenceid"
+]);
+
 export default class Encounter {
   constructor(bundle) {
     this._bundle = bundle;
@@ -38,5 +44,9 @@ export default class Encounter {
     }
 
     return this.period.start.isSame(obj.period.start, 'day');
+  }
+
+  static stripConflictFields(fields) {
+    return fields.filter((field) => STRIP_FIELDS.indexOf(field) === -1);
   }
 }

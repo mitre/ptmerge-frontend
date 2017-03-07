@@ -5,19 +5,19 @@
 .collapsible-panel {
   border: 0;
   box-shadow: none;
-  
+
   &.is-nested {
     .panel-heading {
       padding-left: 10px;
       background-color: lighten($brand-secondary, 10%);
     }
-    
+
     .source {
       &.source1 { margin-left: 20px !important; }
       &.source2 { margin-right: 10px !important; }
     }
   }
-  
+
   &.has-nested {
     & > .panel-body {
       border-left: 10px solid $brand-secondary;
@@ -31,7 +31,7 @@
     height: 48px;
     line-height: 2em;
     padding: 0;
-    
+
     &.has-nested {
       margin-bottom: 0;
     }
@@ -49,11 +49,13 @@
       text-decoration: none;
 
       i {
-        
-
         &.collapsible-chevron {
-          font-size: 1.3em;
-          line-height: 1.5em;
+          font-size: 2em;
+          color: $green;
+
+          &.has-conflicts {
+            color: $red;
+          }
         }
       }
     }

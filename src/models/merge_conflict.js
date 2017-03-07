@@ -1,6 +1,12 @@
 import moment from 'moment';
 import get from '../utils/get';
 
+import Condition from './Condition';
+import Encounter from './Encounter';
+import Medication from './Medication';
+import Patient from './Patient';
+import Procedure from './Procedure';
+
 // classes that we can cross link
 const LINKABLE_OBJECTS = [
   'Condition',
@@ -16,17 +22,30 @@ export default class MergeConflict {
     this.id = bundle.id;
     this.lastUpdated = moment(bundle.meta.lastUpdated);
 
-    let diagnostics = bundle.issue[0].diagnostics.split(':');
+    let [objectClass, objectId] = bundle.issue[0].diagnostics.split(':');
+
     this.mergeConflict = {
-      objectId: diagnostics[1],
-      objectClass: diagnostics[0],
-      fields: bundle.issue[0].location.slice()
+      objectId,
+      objectClass,
+      fields: toClass(objectClass).stripConflictFields(bundle.issue[0].location.slice())
     };
     this.resolved = false;
 
     this.source1PatientObject = null;
     this.source2PatientObject = null;
     this.targetPatientObject = null;
+  }
+
+  isResolved() {
+    return false;
+  }
+
+  unresolvedConflicts() {
+    return this.mergeConflict.fields;
+  }
+
+  hasUnresolvedConflicts(key) {
+    return this.mergeConflict.fields.indexOf(key) !== -1;
   }
 
   isLinkable() {
@@ -53,4 +72,18 @@ function transformObjectClassKey(key) {
   }
 
   return `${key.toLowerCase()}s`;
+}
+
+function toClass(key) {
+  if (key === 'Condition') {
+    return Condition;
+  } else if (key === 'Encounter') {
+    return Encounter;
+  } else if (key === 'MedicationStatement') {
+    return Medication;
+  } else if (key === 'Patient') {
+    return Patient;
+  } else if (key === 'Procedure') {
+    return Procedure;
+  }
 }

@@ -7,7 +7,7 @@ function restructurePatientList(patients) {
   return patients.map(({ resource }) => {
     return {
       id: resource.id,
-      name: `${resource.name[0].family}, ${resource.name[0].given[0]}`
+      name: `${resource.name[0].family}, ${resource.name[0].given[0]} (${resource.id})`
     };
   });
 }

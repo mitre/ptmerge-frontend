@@ -2,6 +2,12 @@ import moment from 'moment';
 
 import get from '../utils/get';
 
+const STRIP_FIELDS = Object.freeze([
+  "id",
+  "subject.reference",
+  "subject.referenceid"
+]);
+
 export default class Procedure {
   constructor(bundle) {
     this._bundle = bundle;
@@ -35,5 +41,9 @@ export default class Procedure {
     }
 
     return this.performedDate.isSame(obj.performedDate, 'day');
+  }
+
+  static stripConflictFields(fields) {
+    return fields.filter((field) => STRIP_FIELDS.indexOf(field) === -1);
   }
 }

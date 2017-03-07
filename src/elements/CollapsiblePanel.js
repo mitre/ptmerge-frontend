@@ -26,28 +26,38 @@ export default class CollapsiblePanel extends Component {
     return <FontAwesome name={this.props.panelIcon} />;
   }
 
-  panelCount() {
-    if (this.props.panelCount == null || this.props.panelCount === '') {
-      return;
-    }
+  hasConflicts() {
+    return this.props.conflictCount > 0;
+  }
 
-    return <span>({this.props.panelCount})</span>;
+  renderedButtons() {
+    if (this.hasConflicts()) {
+      return (
+        <div className="has-conflict-buttons">
+          <button type="button" className="btn btn-primary send-mail-button"><FontAwesome name="paper-plane" /></button>
+          <button type="button" className="btn btn-primary accept-conflict-button">Accept</button>
+        </div>
+      );
+    }
   }
 
   render() {
-    let chevronClassNames = classNames('collapsible-chevron', 'pull-right', 'fa', 'fa-chevron-down', 'rotate',
-                                       { left: this.state.chevronToggle });
+    let chevronClassNames = classNames('collapsible-chevron', 'pull-right', 'fa', 'fa-chevron-circle-down', 'rotate',
+                                       { left: this.state.chevronToggle }, { 'has-conflicts': this.hasConflicts()});
     let panelClassNames = classNames('panel', 'collapsible-panel',
                                      { 'is-nested': this.props.isNested },
                                      { 'has-nested': this.props.hasNested });
-    let panelHeadingClassName = classNames('panel-heading', { 'has-nested': this.props.hasNested });
+    let panelHeadingClassNames = classNames('panel-heading', { 'has-nested': this.props.hasNested });
 
     return (
       <div className={panelClassNames}>
-        <div className={panelHeadingClassName}>
+        <div className={panelHeadingClassNames}>
           <a onClick={ ()=> this.setState({ open: !this.state.open, chevronToggle: !this.state.chevronToggle })}>
-            <span className="panel-title">{this.panelIcon()} {`${this.props.panelTitle}`} {this.panelCount()}</span>
+            <span className="panel-title">{this.panelIcon()} {`${this.props.panelTitle}`}</span>
+
             <i className={chevronClassNames}></i>
+            <span className="conflict-count">{this.props.conflictCount}</span>
+            {this.renderedButtons()}
           </a>
         </div>
 
@@ -66,7 +76,7 @@ CollapsiblePanel.displayName = "CollapsiblePanel";
 CollapsiblePanel.propTypes = {
   panelTitle: PropTypes.string.isRequired,
   panelIcon: PropTypes.string,
-  panelCount: PropTypes.number,
+  conflictCount: PropTypes.number,
   isNested: PropTypes.bool,
   hasNested: PropTypes.bool,
   children: PropTypes.element

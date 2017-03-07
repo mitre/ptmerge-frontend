@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import FontAwesome from 'react-fontawesome';
+import classNames from 'classnames';
 import _ from 'lodash';
 
 // displays row of patient data for the given category
@@ -13,12 +14,16 @@ export default class MergeRow extends Component {
   }
 
   render() {
-    let className = `merge-row row patient-${this.props.patientType}${this.props.hasConflict ? ' has-conflict' : ''}`;
+    let className = classNames(
+      'merge-row', 'row', `patient-${this.props.patientType}`,
+      { 'has-conflict': this.props.hasConflict },
+      { [`value-from-${this.props.conflictFrom}`]: this.props.conflictFrom }
+    );
 
     return (
       <div className={className}>
         <div className="col key">{this.props.categoryName}</div>
-        <div className="col value">{this.props.categoryValue}</div>
+        <div className="col value" title={this.props.categoryValue}>{this.props.categoryValue}</div>
         <div className="merge-tool-placeholder">
           {this.props.hasConflict ? this.renderedArrow() : null}
         </div>
@@ -33,5 +38,6 @@ MergeRow.propTypes = {
   categoryName: PropTypes.string,
   categoryValue: PropTypes.any,
   patientType: PropTypes.string,
-  hasConflict: PropTypes.bool
+  hasConflict: PropTypes.bool,
+  conflictFrom: PropTypes.string
 };

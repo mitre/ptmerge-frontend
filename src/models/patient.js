@@ -5,6 +5,10 @@ import Encounter from './encounter';
 import Medication from './medication';
 import Procedure from './procedure';
 
+const STRIP_FIELDS = Object.freeze([
+  "id"
+]);
+
 export default class Patient {
   constructor(bundle) {
     this._bundle = bundle;
@@ -20,6 +24,7 @@ export default class Patient {
       family: name.family,
       given: name.given[0]
     };
+
     this.gender = patient.gender;
     this.birthDate = patient.birthDate;
 
@@ -41,8 +46,16 @@ export default class Patient {
     this.procedures = mapResources(bundle, 'Procedure', Procedure);
   }
 
+  getId() {
+    return this.id;
+  }
+
   getName() {
     return `${this.name.family}, ${this.name.given}`;
+  }
+
+  static stripConflictFields(fields) {
+    return fields.filter((field) => STRIP_FIELDS.indexOf(field) === -1);
   }
 }
 

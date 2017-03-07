@@ -74,7 +74,7 @@ export class Merge extends Component {
       this.setState({
         sourcePatientList: nextProps.patientList.map(({ id, name }) => {
           return { value: id, label: name };
-        })
+        }).sort((a, b) => a.label.localeCompare(b.label))
       });
     } else if (this.props.patientMerger !== nextProps.patientMerger) {
       this.setState({
@@ -147,7 +147,7 @@ export class Merge extends Component {
           <span className="icon-line"></span>
         </div>
 
-        {this.props.patientMerger.targetPatient.getName()}
+        {`${this.props.patientMerger.targetPatient.getName()} (${this.props.patientMerger.targetPatient.getId()})`}
       </div>
     );
   }
@@ -161,14 +161,12 @@ export class Merge extends Component {
       <div className="merge-tool-footer">
         <div className="d-flex justify-content-around">
           <div className="source source1">
-            <div className="line"></div>
             <div className="record-end"></div>
           </div>
 
           <div className="merge-tool-placeholder"></div>
 
           <div className="target">
-            <div className="line"></div>
             <div className="conflict-count">
               <FontAwesome name="exclamation-circle" />
               {this.props.patientMerger.numConflicts()} conflicts to accept
@@ -183,7 +181,6 @@ export class Merge extends Component {
           <div className="merge-tool-placeholder"></div>
 
           <div className="source source2">
-            <div className="line"></div>
             <div className="record-end"></div>
           </div>
         </div>
@@ -200,7 +197,7 @@ export class Merge extends Component {
           <div className="merge-tool-header">
             <div className="merge-tool-header-titles row">
               <div className="merge-tool-header-title col">Source</div>
-              <div className="merge-tool-header-title col">Target</div>
+              <div className="merge-tool-header-title col">{this.state.mergeInProgress ? 'Target' : ''}</div>
               <div className="merge-tool-header-title col">Source</div>
             </div>
 
@@ -213,7 +210,7 @@ export class Merge extends Component {
 
                 {(() => {
                   if (this.state.mergeInProgress) {
-                    return this.props.patientMerger.source1Patient.getName();
+                    return `${this.props.patientMerger.source1Patient.getName()} (${this.props.patientMerger.source1Patient.getId()})`;
                   }
 
                   return (
@@ -240,7 +237,7 @@ export class Merge extends Component {
 
                 {(() => {
                   if (this.state.mergeInProgress) {
-                    return this.props.patientMerger.source2Patient.getName();
+                    return `${this.props.patientMerger.source2Patient.getName()} (${this.props.patientMerger.source2Patient.getId()})`;
                   }
 
                   return (
