@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 import MergeConflict from './merge_conflict';
 
 export default class PatientMerger {
@@ -8,13 +10,80 @@ export default class PatientMerger {
     this.targetPatient = targetPatient;
     this._bundle = mergeBundle;
 
-    let conflicts = wrapConflicts(mergeBundle, source1Patient, source2Patient, targetPatient);
+    let conflicts = wrapConflicts(mergeId, mergeBundle, source1Patient, source2Patient, targetPatient);
     let { source1Objects, source2Objects, targetObjects } = buildConflictMap(conflicts);
 
     this.conflicts = conflicts;
     this.conflictedSource1Objects = source1Objects;
     this.conflictedSource2Objects = source2Objects;
     this.conflictedTargetObjects = targetObjects;
+  }
+
+  runMerge() {
+    return this._deleteConflicts().then(this._deleteResources.bind(this)).then(this._resolveConflicts.bind(this));
+  }
+
+  _resolveConflicts() {
+    let index = -1;
+    let next = () => {
+      index += 1;
+
+      if (index === this.conflicts.length) {
+        return Promise.resolve();
+      }
+
+      return this.conflicts[index].save().then(next);
+    };
+
+    return next();
+  }
+
+  _deleteConflicts() {
+    let deletedConflicts = Object.values(this.conflictedTargetObjects).filter((obj) => obj.targetPatientObject.isPendingDeletion());
+
+    if (deletedConflicts.length === 0) {
+      return Promise.resolve();
+    }
+
+    let index = -1;
+    let next = () => {
+      index += 1;
+
+      if (index === deletedConflicts.length) {
+        return Promise.resolve();
+      }
+
+      return deletedConflicts[index].delete().then(next);
+    };
+
+    return next();
+  }
+
+  _deleteResources() {
+    let resources = this.targetPatient.objectsPendingDeletion();
+
+    if (resources.length === 0) {
+      return Promise.resolve();
+    }
+
+    let index = -1;
+    let next = () => {
+      index += 1;
+
+      if (index === resources.length) {
+        return Promise.resolve();
+      }
+
+      let resource = resources[index];
+      let request = axios({
+        method: 'delete',
+        url: `${MERGE_SERVER}/merge/${this.mergeId}/target/resources/${resource.getId()}`
+      });
+
+      return request.then(next);
+    };
+
+    return next();
   }
 
   getMergeId() {
@@ -60,10 +129,10 @@ export default class PatientMerger {
   }
 }
 
-function wrapConflicts(bundle, source1Patient, source2Patient, targetPatient) {
+function wrapConflicts(mergeId, bundle, source1Patient, source2Patient, targetPatient) {
   let conflicts = new Array(bundle.entry.length);
   for (let i = 0; i < bundle.entry.length; ++i) {
-    let conflict = new MergeConflict(bundle.entry[i].resource);
+    let conflict = new MergeConflict(mergeId, bundle.entry[i].resource);
 
     if (conflict.isLinkable()) {
       conflict.linkPatientObjects(source1Patient, source2Patient, targetPatient);

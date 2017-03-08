@@ -82,6 +82,25 @@ export default class Patient extends FhirModel {
     return `${this.name.family}, ${this.name.given}`;
   }
 
+  objectsPendingDeletion() {
+    let sources = [
+      this.conditions,
+      this.encounters,
+      this.medications,
+      this.procedures
+    ];
+    let objects = [];
+
+    for (let i = 0; i < sources.length; ++i) {
+      let objectsPendingDeletion = sources[i].filter((source) => source.isPendingDeletion());
+      if (objectsPendingDeletion.length > 0) {
+        objects.splice(objects.length, 0, ...objectsPendingDeletion);
+      }
+    }
+
+    return objects;
+  }
+
   static stripConflictFields(fields) {
     return fields.filter((field) => STRIP_FIELDS.indexOf(field) === -1);
   }

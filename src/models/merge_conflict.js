@@ -1,4 +1,6 @@
 import moment from 'moment';
+import axios from 'axios';
+
 import get from '../utils/get';
 
 import Condition from './Condition';
@@ -17,7 +19,8 @@ const LINKABLE_OBJECTS = [
 ];
 
 export default class MergeConflict {
-  constructor(bundle) {
+  constructor(mergeId, bundle) {
+    this.mergeId = mergeId;
     this._bundle = bundle;
 
     this.id = bundle.id;
@@ -34,6 +37,7 @@ export default class MergeConflict {
       _fields: fields.slice()
     };
     this.resolved = false;
+    this.saved = false;
 
     this.source1PatientObject = null;
     this.source2PatientObject = null;
@@ -67,6 +71,39 @@ export default class MergeConflict {
 
   isResolved() {
     return this.resolved;
+  }
+
+  save() {
+    if (!this.isResolved()) {
+      return;
+    } else if (this.saved) {
+      return Promise.resolve();
+    }
+
+    let request = axios({
+      method: 'post',
+      url: `${MERGE_SERVER}/merge/${this.mergeId}/resolve/${this.id}`,
+      data: this.targetPatientObject.toFhir()
+    });
+
+    request.then(() => {
+      this.saved = true;
+    });
+
+    return request;
+  }
+
+  delete() {
+    let request = axios({
+      method: 'delete',
+      url: `${MERGE_SERVER}/merge/${this.mergeId}/resolve/${this.id}`
+    });
+
+    request.then(() => {
+      this.saved = true;
+    })
+
+    return request;
   }
 
   getUnresolvedConflicts() {

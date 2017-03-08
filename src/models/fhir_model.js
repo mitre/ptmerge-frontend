@@ -33,6 +33,14 @@ export default class FhirModel {
     return `${this.modelName}:${this.getId()}`;
   }
 
+  toFhir(pretty = false) {
+    if (pretty) {
+      return JSON.stringify(this._bundle, null, 2);
+    }
+
+    return JSON.stringify(this._bundle);
+  }
+
   matches(/* obj */) {
     return false;
   }

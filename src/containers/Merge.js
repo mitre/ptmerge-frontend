@@ -6,7 +6,7 @@ import FontAwesome from 'react-fontawesome';
 import Select from 'react-select';
 
 import { fetchPatient, fetchPatientList } from '../actions/patient';
-import { mergePatients, abortMerge } from '../actions/merge';
+import { mergePatients, abortMerge, resetMerge } from '../actions/merge';
 
 import PageHeader from '../components/Header/PageHeader';
 import MergeCategory from '../components/Merge/MergeCategory';
@@ -77,15 +77,33 @@ export class Merge extends Component {
     this.props.mergePatients(this.state.source1Patient.id, this.state.source2Patient.id);
   }
 
+  runMerge() {
+    this.setState({ loading: true });
+    this.props.patientMerger.runMerge().then(() => {
+      // TODO: we are done, display a modal and then reset the page
+      // to reset: this.resetMerge()
+      alert('done!');
+    });
+  }
+
+  resetMerge() {
+    this.props.resetMerge();
+    this.resetState();
+  }
+
   abortMerge() {
     this.setState({ loading: true });
     this.props.abortMerge(this.props.patientMerger.getMergeId()).then(() => {
-      this.setState({
-        source1Patient: null,
-        source2Patient: null,
-        mergeInProgress: false,
-        loading: false
-      });
+      this.resetState();
+    });
+  }
+
+  resetState() {
+    this.setState({
+      source1Patient: null,
+      source2Patient: null,
+      mergeInProgress: false,
+      loading: false
     });
   }
 
@@ -190,7 +208,7 @@ export class Merge extends Component {
 
             <div className="action-buttons">
               <button type="button" className="btn btn-secondary" disabled={this.state.loading} onClick={this.abortMerge.bind(this)}>Cancel</button>
-              <button type="button" className="btn btn-primary" disabled={this.state.loading || numConflicts > 0}>Create Target Record</button>
+              <button type="button" className="btn btn-primary" disabled={this.state.loading || numConflicts > 0} onClick={this.runMerge.bind(this)}>Create Target Record</button>
             </div>
           </div>
 
@@ -287,7 +305,8 @@ Merge.propTypes = {
   fetchPatient: PropTypes.func.isRequired,
   fetchPatientList: PropTypes.func.isRequired,
   mergePatients: PropTypes.func.isRequired,
-  abortMerge: PropTypes.func.isRequired
+  abortMerge: PropTypes.func.isRequired,
+  resetMerge: PropTypes.func.isRequired
 };
 
 function mapDispatchToProps(dispatch) {
@@ -295,7 +314,8 @@ function mapDispatchToProps(dispatch) {
     fetchPatient,
     fetchPatientList,
     mergePatients,
-    abortMerge
+    abortMerge,
+    resetMerge
   }, dispatch);
 }
 
