@@ -1,8 +1,6 @@
 import moment from 'moment';
 import axios from 'axios';
 
-import get from '../utils/get';
-
 import Condition from './Condition';
 import Encounter from './Encounter';
 import Medication from './Medication';
@@ -28,13 +26,14 @@ export default class MergeConflict {
 
     let [objectClass, objectId] = bundle.issue[0].diagnostics.split(':');
 
-    let fields = alterKeySyntax(toClass(objectClass).stripConflictFields(bundle.issue[0].location.slice()));
+    let _fields = toClass(objectClass).stripConflictFields(bundle.issue[0].location.slice());
+    let fields = alterKeySyntax(_fields);
 
     this.mergeConflict = {
       objectId,
       objectClass,
       fields,
-      _fields: fields.slice()
+      _fields
     };
     this.resolved = false;
     this.saved = false;
@@ -101,7 +100,7 @@ export default class MergeConflict {
 
     request.then(() => {
       this.saved = true;
-    })
+    });
 
     return request;
   }
@@ -141,6 +140,21 @@ export default class MergeConflict {
       this.targetPatientObject = targetPatientObject;
       this.source1PatientObject = source1Patient[key].find((obj) => obj.matches(targetPatientObject));
       this.source2PatientObject = source2Patient[key].find((obj) => obj.matches(targetPatientObject));
+    }
+  }
+
+  linkTargetObject(targetPatient) {
+    if (this.mergeConflict.objectClass === 'Patient') {
+      this.targetPatientObject = targetPatient;
+    } else {
+      let key = transformObjectClassKey(this.mergeConflict.objectClass);
+
+      let targetPatientObject = targetPatient[key].find((obj) => obj.id === this.mergeConflict.objectId);
+      if (targetPatientObject == null) {
+        return;
+      }
+
+      this.targetPatientObject = targetPatientObject;
     }
   }
 }

@@ -13,6 +13,7 @@ global.document = jsdom.jsdom('<!doctype html><html><body></body></html>');
 global.window = global.document.defaultView;
 global.navigator = global.window.navigator;
 global.FHIR_SERVER = 'http://localhost:3001';
+global.MERGE_SERVER = 'http://localhost:5000';
 const $ = _$(window);
 
 chaiJquery(chai, chai.util, $);

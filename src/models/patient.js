@@ -1,5 +1,3 @@
-import moment from 'moment';
-
 import FhirModel from './fhir_model';
 
 import Condition from './condition';

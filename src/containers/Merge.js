@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { browserHistory } from 'react-router';
 import FontAwesome from 'react-fontawesome';
 
 import Select from 'react-select';
@@ -15,6 +16,7 @@ import PatientMerger from '../models/patient_merger';
 import { conditionMergeKeys } from '../models/condition';
 import { encounterMergeKeys } from '../models/encounter';
 import { medicationMergeKeys } from '../models/medication';
+import { procedureMergeKeys } from '../models/procedure';
 import {
   addressMergeKeys,
   nameMergeKeys,
@@ -24,7 +26,6 @@ import {
   metaMergeKeys,
   telecomMergeKeys
 } from '../models/patient';
-import { procedureMergeKeys } from '../models/procedure';
 
 export class Merge extends Component {
   constructor(props) {
@@ -82,7 +83,8 @@ export class Merge extends Component {
     this.props.patientMerger.runMerge().then(() => {
       // TODO: we are done, display a modal and then reset the page
       // to reset: this.resetMerge()
-      alert('done!');
+      browserHistory.push('/');
+      this.resetMerge();
     });
   }
 
@@ -155,8 +157,8 @@ export class Merge extends Component {
       <MergeCategory {...params} key="encounters" panelTitle="Encounters" objectKey="encounters" patientMerger={this.props.patientMerger} keys={encounterMergeKeys} />,
       <MergeCategory {...params} key="familyHistory" panelTitle="Family History" objectKey={null} patientMerger={this.props.patientMerger} keys={null} />,
       <MergeCategory {...params} key="immunization" panelTitle="Immunizations" objectKey={null} patientMerger={this.props.patientMerger} keys={null} />,
-      <MergeCategory {...params} key="lab" panelTitle="Lab" objectKey={null} patientMerger={this.props.PatientMerger} keys={null} />,
-      <MergeCategory {...params} key="lifeHistory" panelTitle="Life History" objectKey={null} patientMerger={this.props.PatientMerger} keys={null} />,
+      <MergeCategory {...params} key="lab" panelTitle="Lab" objectKey={null} patientMerger={this.props.patientMerger} keys={null} />,
+      <MergeCategory {...params} key="lifeHistory" panelTitle="Life History" objectKey={null} patientMerger={this.props.patientMerger} keys={null} />,
       <MergeCategory {...params} key="medications" panelTitle="Medications" objectKey="medications" patientMerger={this.props.patientMerger} keys={medicationMergeKeys} />,
       <MergeCategory {...params} key="procedures" panelTitle="Procedures" objectKey="procedures" patientMerger={this.props.patientMerger} keys={procedureMergeKeys} />,
       <MergeCategory {...params} key="vitals" panelTitle="Vitals" objectKey={null} patientMerger={this.props.patientMerger} keys={null} />

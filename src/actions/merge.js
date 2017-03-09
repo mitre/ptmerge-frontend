@@ -3,7 +3,9 @@ import axios from 'axios';
 import {
   MERGE_PATIENTS,
   ABORT_MERGE_PATIENTS,
-  RESET_MERGE_PATIENTS
+  RESET_MERGE_PATIENTS,
+  GET_COMPLETED_MERGES,
+  GET_MERGE_TARGET_BUNDLES
 } from './types';
 
 export function mergePatients(source1PatientId, source2PatientId) {
@@ -51,6 +53,49 @@ export function abortMerge(mergeId) {
 export function resetMerge() {
   return {
     type: RESET_MERGE_PATIENTS
+  };
+}
+
+export function getCompletedMerges() {
+  return {
+    type: GET_COMPLETED_MERGES,
+    payload: axios({
+      method: 'get',
+      url: `${MERGE_SERVER}/merge`
+    })
+  };
+}
+
+export function getTargetBundles(mergeIds) {
+  let payload = mergeIds.map((mergeId) => {
+    return axios({
+      method: 'get',
+      url: `${MERGE_SERVER}/merge/${mergeId}/target`
+    }).then((payload) => {
+      return {
+        type: 'Patient',
+        payload,
+        mergeId
+      };
+    });
+  });
+
+  payload.splice(payload.length, 0, ...mergeIds.map((mergeId) => {
+    return axios({
+      method: 'get',
+      url: `${MERGE_SERVER}/merge/${mergeId}/resolved`
+    }).then((payload) => {
+      return {
+        type: 'MergeConflict',
+        payload,
+        mergeId
+      };
+    });
+  }));
+
+  return {
+    type: GET_MERGE_TARGET_BUNDLES,
+    payload: axios.all(payload)
   };
 }
 

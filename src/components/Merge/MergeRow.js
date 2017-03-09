@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import FontAwesome from 'react-fontawesome';
 import classNames from 'classnames';
-import _ from 'lodash';
 
 // displays row of patient data for the given category
 export default class MergeRow extends Component {

@@ -8,7 +8,7 @@ export default class FhirModel {
     this._bundle = bundle;
 
     this.id = bundle.id;
-    this.lastUpdated = moment(bundle.meta.lastUpdated);
+    this.lastUpdated = bundle.meta ? moment(bundle.meta.lastUpdated) : null;
     this._pendingDelete = false;
   }
 

@@ -1,6 +1,4 @@
 // Restructures the response of the patient endpoint
-import moment from 'moment';
-
 import { FETCH_PATIENT_LIST_FULFILLED } from '../actions/types';
 
 function restructurePatientList(patients) {
