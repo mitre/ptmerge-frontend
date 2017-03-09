@@ -1,17 +1,23 @@
 import { createStore, applyMiddleware, compose } from 'redux';
-import promiseMiddleware from 'redux-promise-middleware';
-import createLogger from 'redux-logger';
 import DevTools from '../containers/DevTools';
+import createLogger from 'redux-logger';
 import rootReducer from '../reducers';
+import promiseMiddleware from 'redux-promise-middleware';
+
+import restructurePatientsMiddleware from '../middlewares/restructure_patients';
+import restructureMergeMiddleware from '../middlewares/restructure_merge';
 
 export default function configureStore(initialState) {
   let middleware = applyMiddleware(
     promiseMiddleware(),
-    createLogger()
+    createLogger(),
+    restructurePatientsMiddleware,
+    restructureMergeMiddleware
   );
 
-  let enhancer = compose(middleware, DevTools.instrument());
-  let store = createStore(rootReducer, initialState, enhancer);
-
-  return store;
+  return createStore(
+    rootReducer,
+    initialState,
+    compose(middleware, DevTools.instrument())
+  );
 }

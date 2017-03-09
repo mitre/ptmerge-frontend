@@ -1,0 +1,70 @@
+@import "variables";
+
+/* ------------------------- COLLAPSIBLE PANEL ----------------------------- */
+
+.collapsible-panel {
+  border: 0;
+  box-shadow: none;
+  border-bottom: 1px solid $very-light-gray;
+
+  &.is-nested {
+    .panel-heading {
+      padding-left: 10px;
+      background-color: lighten($brand-secondary, 10%);
+    }
+
+    .source {
+      &.source1 { margin-left: 20px !important; }
+      &.source2 { margin-right: 10px !important; }
+    }
+  }
+
+  &.has-nested {
+    & > .panel-body {
+      border-left: 10px solid $brand-secondary;
+    }
+  }
+
+  .panel-heading {
+    background-color: $brand-secondary;
+    border-radius: 0;
+    color: $white;
+    height: 48px;
+    line-height: 2em;
+    padding: 0;
+
+    &.has-nested {
+      margin-bottom: 0;
+    }
+
+    .panel-title {
+      font-size: 18px;
+      font-weight: normal;
+    }
+
+    a {
+      color: $white;
+      cursor: pointer;
+      display: block;
+      padding: 10px 15px;
+      text-decoration: none;
+
+      i {
+        &.collapsible-chevron {
+          font-size: 2em;
+          color: $green;
+
+          &.has-conflicts {
+            color: $red;
+          }
+        }
+      }
+    }
+  }
+
+  .panel-body {
+    margin: 0;
+    padding: 0;
+    background-color: $very-light-gray;
+  }
+}

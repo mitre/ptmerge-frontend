@@ -21,13 +21,16 @@ module.exports = {
       { test: /\.js$/, exclude: /node_modules/, loader: 'babel' },
       { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url-loader?limit=10000&mimetype=application/font-woff&name=assets/[name]-[hash].[ext]' },
       { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'file-loader?name=assets/[name]-[hash].[ext]' },
-      { test: /\.scss$/, loader: ExtractTextPlugin.extract('style', 'css!sass') },
+      { test: /\.css$/, loader: ExtractTextPlugin.extract('style', 'css') },
+      { test: /\.scss$/, loader: ExtractTextPlugin.extract('style', 'css!sass') }
     ]
   },
 
   plugins: [
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+      FHIR_SERVER: JSON.stringify(process.env.FHIR_SERVER || 'http://localhost:3001'),
+      MERGE_SERVER: JSON.stringify(process.env.MERGE_SERVER || 'http://localhost:5000')
     }),
     new HtmlWebpackPlugin({
       template: path.join(__dirname, "src", "index.tmpl.html")

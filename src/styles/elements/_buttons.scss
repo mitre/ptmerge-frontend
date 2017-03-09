@@ -1,0 +1,12 @@
+@import "variables";
+
+.btn {
+  border-radius: 0;
+  margin: 10px;
+  font-weight: 100;
+  
+  &.btn-primary {
+    background-color: $brand-primary;
+    border: none;
+  }
+}

@@ -1,0 +1,239 @@
+@import "../elements/variables";
+
+.merge {
+  margin: 0;
+
+  .merge-tool {
+    .merge-tool-placeholder {
+      width: 50px;
+    }
+
+    .merge-tool-header,
+    .merge-tool-body,
+    .merge-tool-footer {
+      .source {
+        &.source1 { margin-left: 25px; }
+        &.source2 { margin-right: 25px; }
+      }
+    }
+
+    .merge-tool-header {
+      margin-bottom: -3px;
+
+      .merge-tool-header-titles {
+        margin-bottom: 5px;
+        text-align: center;
+        color: $white;
+        font-size: 1.2em;
+        font-weight: 300;
+        letter-spacing: 1px;
+      }
+
+      .merge-tool-header-selectors {
+        margin: 0;
+
+        .merge-button {
+          background-color: $brand-secondary;
+          color: $white;
+          border: none;
+          width: 400px;
+          margin: 0 0 3px 0;
+          justify-content: center;
+        }
+
+        .merge-tool-header-selector {
+          display: block;
+          width: 400px;
+          background-color: $white;
+          padding: 5px 10px 0 10px;
+
+          &.source {
+            margin-bottom: 3px;
+          }
+
+          &.target {
+            border: 3px solid $brand-secondary;
+          }
+
+          .merge-tool-header-selector-icon {
+            position: relative;
+            padding-top: 5px;
+
+            &.source-1 > .fa { color: $source1; }
+            &.source-2 > .fa { color: $source2; }
+
+            .fa {
+              position: relative;
+              z-index: 1;
+              padding: 0 10px;
+              font-size: 1.3em;
+              text-align: center;
+            }
+
+            .icon-line {
+              display: block;
+              position: absolute;
+              margin-left: 16px;
+              width: 3px;
+              height: 75%;
+              top: 25%;
+              background-color: $lighter-gray;
+            }
+          }
+
+          .source-name {
+            padding-bottom: 10px;
+          }
+        }
+      }
+    }
+
+    .merge-tool-body,
+    .merge-tool-footer {
+      background-color: $white;
+
+      .line {
+        display: block;
+        position: absolute;
+        margin-left: 26px;
+        width: 3px;
+        height: 100%;
+        top: 0;
+        background-color: #EBEBEB;
+      }
+
+      .source,
+      .target {
+        position: relative;
+        background-color: $white;
+        width: 400px;
+        padding-bottom: 1px;
+      }
+
+      .target {
+        border-left: 3px solid $brand-secondary;
+        border-right: 3px solid $brand-secondary;
+      }
+
+      .merge-row {
+        .key {
+          text-align: right;
+          font-weight: bold;
+        }
+      }
+
+      .arrow {
+        position: absolute;
+        cursor: pointer;
+
+        &.arrow-source1 {
+          right: -25px;
+          color: $source1;
+        }
+
+        &.arrow-source2 {
+          left: -25px;
+          color: $source2;
+        }
+      }
+    }
+
+    .merge-tool-body {
+      .conflict-count {
+        float: right;
+        padding-left: 20px;
+        font-size: 1.2em;
+        font-weight: bold;
+        color: $red;
+      }
+
+      .has-conflict-buttons {
+        margin: 0;
+        float: right;
+
+        .accept-conflict-button,
+        .send-mail-button {
+          margin: -4px 0 0 0;
+          padding: 8px 20px;
+          background-color: $green;
+        }
+
+        .send-mail-button {
+          margin-right: 10px;
+          padding: 8px;
+        }
+      }
+
+      .divider {
+        border-bottom: 2px dashed $lighter-gray;
+        margin: 10px 0 10px 30px;
+      }
+
+      .panel-body .d-flex:last-child .divider {
+        border-bottom: none;
+      }
+
+      .empty-resource {
+        .empty-resource-text {
+          color: $light-gray;
+          text-align: center;
+          margin-top: 10px;
+          font-style: italic;
+        }
+      }
+    }
+
+    .merge-tool-footer {
+      background-color: $lighter-gray;
+      margin: 0;
+      padding: 0;
+
+      .line {
+        height: 50%;
+      }
+
+      .source {
+        height: 40px;
+      }
+
+      .target {
+        margin-bottom: 40px;
+        border-bottom: 3px solid $brand-secondary;
+      }
+
+      .conflict-count {
+        margin: 50px 0 5px 0;
+        color: $red;
+        text-align: center;
+        font-size: 1.2em;
+      }
+
+      .conflict-count.done {
+        color: $green;
+      }
+
+      .action-buttons {
+        text-align: center;
+      }
+    }
+  }
+
+  .col.value {
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  .has-conflict {
+    margin: 0;
+  }
+
+  .has-conflict.patient-source1,
+  .has-conflict.value-from-source1 {
+    background-color: $source1opaque;
+  }
+
+  .has-conflict.patient-source2,
+  .has-conflict.value-from-source2 {
+    background-color: $source2opaque;
+  }
+}
