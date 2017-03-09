@@ -1,11 +1,11 @@
 import moment from 'moment';
 import axios from 'axios';
 
-import Condition from './Condition';
-import Encounter from './Encounter';
-import Medication from './Medication';
-import Patient from './Patient';
-import Procedure from './Procedure';
+import Condition from './condition';
+import Encounter from './encounter';
+import Medication from './medication';
+import Patient from './patient';
+import Procedure from './procedure';
 
 // classes that we can cross link
 const LINKABLE_OBJECTS = [
